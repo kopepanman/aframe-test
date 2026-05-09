@@ -2,38 +2,218 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
 
+  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+
+  <!-- AR.js -->
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: sans-serif;
+    }
+
+    #message {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+      color: white;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    #loading {
+      position: absolute;
+      inset: 0;
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      color: white;
+      font-size: 20px;
+    }
+  </style>
 </head>
 
-<body style="margin:0; overflow:hidden;">
+<body>
 
-<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+<div id="loading">読み込み中...</div>
+<div id="message">カメラ確認中...</div>
 
-  <a-assets>
-    <a-asset-item id="model" src="./kisya_4.glb"></a-asset-item>
-  </a-assets>
+<script>
+async function startApp() {
 
-  <!-- ライト -->
-  <a-entity light="type: ambient; intensity: 1"></a-entity>
-  <a-entity light="type: directional; intensity: 1" position="1 1 1"></a-entity>
+  const loading = document.getElementById("loading");
+  const message = document.getElementById("message");
 
-  <a-marker preset="hiro">
+  try {
 
-    <a-entity
-      gltf-model="#model"
-      scale="0.05 0.05 0.05"
-      position="0 0.5 0"
-      rotation="0 180 0">
-    </a-entity>
+    // =========================
+    // カメラ確認
+    // =========================
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true
+    });
 
-  </a-marker>
+    stream.getTracks().forEach(track => track.stop());
 
-  <a-entity camera></a-entity>
+    message.innerHTML = "ARモード";
 
-</a-scene>
+    // =========================
+    // ARモード
+    // =========================
+    document.body.insertAdjacentHTML("beforeend", `
+
+      <a-scene
+        embedded
+        renderer="antialias: true; alpha: true;"
+        vr-mode-ui="enabled: false"
+        arjs="
+          sourceType: webcam;
+          debugUIEnabled: false;
+        ">
+
+        <a-assets>
+          <a-asset-item
+            id="model"
+            src="./kisya_4.glb">
+          </a-asset-item>
+        </a-assets>
+
+        <!-- ライト -->
+        <a-entity
+          light="
+            type: ambient;
+            intensity: 1.5;
+          ">
+        </a-entity>
+
+        <a-entity
+          light="
+            type: directional;
+            intensity: 2;
+          "
+          position="1 2 1">
+        </a-entity>
+
+        <!-- マーカー -->
+        <a-marker preset="hiro">
+
+          <!-- モデル -->
+          <a-entity
+            gltf-model="#model"
+
+            scale="1 1 1"
+
+            position="0 0.8 0"
+
+            rotation="0 180 0"
+
+            animation="
+              property: rotation;
+              to: 0 540 0;
+              loop: true;
+              dur: 10000;
+              easing: linear;
+            ">
+          </a-entity>
+
+        </a-marker>
+
+        <!-- カメラ -->
+        <a-entity camera></a-entity>
+
+      </a-scene>
+    `);
+
+    loading.style.display = "none";
+
+  } catch (e) {
+
+    console.log("カメラ拒否:", e);
+
+    message.innerHTML = "通常3Dモード";
+
+    // =========================
+    // 通常3Dモード
+    // =========================
+    document.body.insertAdjacentHTML("beforeend", `
+
+      <a-scene
+        embedded
+        renderer="antialias: true;"
+        vr-mode-ui="enabled: false">
+
+        <a-assets>
+          <a-asset-item
+            id="model"
+            src="./kisya_4.glb">
+          </a-asset-item>
+        </a-assets>
+
+        <!-- 背景 -->
+        <a-sky color="#111"></a-sky>
+
+        <!-- ライト -->
+        <a-entity
+          light="
+            type: ambient;
+            intensity: 1.5;
+          ">
+        </a-entity>
+
+        <a-entity
+          light="
+            type: directional;
+            intensity: 2;
+          "
+          position="1 2 1">
+        </a-entity>
+
+        <!-- モデル -->
+        <a-entity
+          gltf-model="#model"
+
+          scale="2.5 2.5 2.5"
+
+          position="0 0 -8"
+
+          rotation="0 180 0"
+
+          animation="
+            property: rotation;
+            to: 0 540 0;
+            loop: true;
+            dur: 10000;
+            easing: linear;
+          ">
+        </a-entity>
+
+        <!-- カメラ -->
+        <a-entity
+          camera
+          position="0 1.6 0">
+        </a-entity>
+
+      </a-scene>
+    `);
+
+    loading.style.display = "none";
+  }
+}
+
+startApp();
+</script>
 
 </body>
 </html>
