@@ -13,14 +13,20 @@
 <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
 <style>
-body {
- margin: 0;
- font-family: sans-serif;
- text-align: center;
-}
+body { margin: 0; font-family: sans-serif; text-align: center; }
 
-#map { height: 70vh; }
-#arView { display: none; }
+#map { height: 60vh; }
+
+#arContainer {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ background: black;
+ display: none;
+ z-index: 999;
+}
 
 button {
  margin: 5px;
@@ -32,50 +38,64 @@ button {
 
 <body>
 
-<h2>GPS + AR 切替</h2>
+<h1>GPS追跡マップ</h1>
 
-<button onclick="showMap()">マップ表示</button>
-<button onclick="showAR()">カメラ起動</button>
-
-<!-- ================= MAP ================= -->
-<div id="mapView">
- <div id="map"></div>
+<div id="info">
  <p id="speed">速度: 0 km/h</p>
- <p id="distance">距離: 0 m</p>
+ <p id="distance">移動距離: 0 m</p>
+
+ <div id="gpsData">
+  <p id="latitude">緯度: -</p>
+  <p id="longitude">経度: -</p>
+  <p id="altitude">高度: -</p>
+  <p id="accuracy">精度: -</p>
+ </div>
+
+ <button id="followBtn">追従: ON</button>
+ <button id="resetBtn">リセット</button>
+ <button id="toggleGpsBtn">GPS情報を隠す</button>
+
+ <!-- ✅ AR起動ボタン追加 -->
+ <button onclick="startAR()">📷 カメラ起動</button>
 </div>
 
-<!-- ================= AR ================= -->
-<div id="arView">
- <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-   <a-assets>
-     <a-asset-item id="model" src="Cornet.glb"></a-asset-item>
-   </a-assets>
+<div id="map"></div>
 
-   <a-marker preset="hiro">
-     <a-entity gltf-model="#model"
-               scale="0.5 0.5 0.5"
-               position="0 0 0"
-               rotation="0 180 0">
-     </a-entity>
-   </a-marker>
+<!-- ✅ AR表示コンテナ -->
+<div id="arContainer"></div>
 
-   <a-entity camera></a-entity>
- </a-scene>
-</div>
-
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// ================= 表示切替 =================
-function showMap() {
- document.getElementById("mapView").style.display = "block";
- document.getElementById("arView").style.display = "none";
+// ================= AR 起動 =================
+function startAR() {
+ const container = document.getElementById("arContainer");
+
+ container.style.display = "block";
+
+ // ✅ 動的にARシーン生成
+ container.innerHTML = `
+  <button onclick="stopAR()" style="position:absolute;z-index:1000;">閉じる</button>
+
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+   <a-assets>
+    <a-asset-item id="model" src="Corn position="0 0 0">
+    </a-entity>
+   </a-marker>
+
+   <a-entity camera></a-entity>
+  </a-scene>
+ `;
 }
 
-function showAR() {
- document.getElementById("mapView").style.display = "none";
- document.getElementById("arView").style.display = "block";
+// ================= AR 停止 =================
+function stopAR() {
+ const container = document.getElementById("arContainer");
+
+ // ✅ 完全削除（これが超重要）
+ container.innerHTML = "";
+
+ container.style.display = "none";
 }
 
 // ================= マップ =================
@@ -85,40 +105,84 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
  attribution: '© OpenStreetMap'
 }).addTo(map);
 
+const speedText = document.getElementById("speed");
+const distanceText = document.getElementById("distance");
+const followBtn = document.getElementById("followBtn");
+const resetBtn = document.getElementById("resetBtn");
+const toggleGpsBtn = document.getElementById("toggleGpsBtn");
+const gpsData = document.getElementById("gpsData");
+const latitudeText = document.getElementById("latitude");
+const longitudeText = document.getElementById("longitude");
+const altitudeText = document.getElementById("altitude");
+const accuracyText = document.getElementById("accuracy");
+
+let followMode = true;
+followBtn.onclick = () => {
+ followMode = !followMode;
+ followBtn.textContent = followMode ? "追従: ON" : "追従: OFF";
+};
+
+resetBtn.onclick = () => {
+ if (!confirm("リセットしますか？")) return;
+ totalDistance = 0;
+ distanceText.textContent = "移動距離: 0 m";
+ path = [];
+ polyline.setLatLngs([]);
+ previousLat = null;
+ previousLng = null;
+ if (marker) map.removeLayer(marker);
+ marker = null;
+};
+
+let gpsVisible = true;
+toggleGpsBtn.onclick = () => {
+ gpsVisible = !gpsVisible;
+ gpsData.style.display = gpsVisible ? "block" : "none";
+};
+
 let marker;
-let totalDistance = 0;
 let path = [];
 let polyline = L.polyline(path, { color: 'blue' }).addTo(map);
 
-let prevLat = null;
-let prevLng = null;
+let totalDistance = 0;
+let previousLat = null;
+let previousLng = null;
 
-const speedText = document.getElementById("speed");
-const distanceText = document.getElementById("distance");
-
+// GPS
 navigator.geolocation.watchPosition(pos => {
  const lat = pos.coords.latitude;
  const lng = pos.coords.longitude;
+ const altitude = pos.coords.altitude;
+ const accuracy = pos.coords.accuracy;
 
  let speed = pos.coords.speed || 0;
  speed = (speed * 3.6).toFixed(1);
 
+ latitudeText.textContent = `緯度: ${lat.toFixed(6)}`;
+ longitudeText.textContent = `経度: ${lng.toFixed(6)}`;
+ altitudeText.textContent = altitude !== null
+  ? `高度: ${altitude.toFixed(1)} m`
+  : "高度: 取得不可";
+ accuracyText.textContent = `精度: ${accuracy.toFixed(1)} m`;
+
  speedText.textContent = `速度: ${speed} km/h`;
 
- if (prevLat !== null) {
-  totalDistance += getDistance(prevLat, prevLng, lat, lng);
- }
-
- prevLat = lat;
- prevLng = lng;
-
- distanceText.textContent =
-  totalDistance < 1000
-   ? `距離: ${totalDistance.toFixed(1)} m`
-   : `距離: ${(totalDistance/1000).toFixed(2)} km`;
+ if (followMode) map.setView([lat, lng], 17);
 
  path.push([lat, lng]);
  polyline.setLatLngs(path);
+
+ if (previousLat !== null) {
+  totalDistance += getDistance(previousLat, previousLng, lat, lng);
+ }
+
+ previousLat = lat;
+ previousLng = lng;
+
+ distanceText.textContent =
+  totalDistance < 1000
+   ? `移動距離: ${totalDistance.toFixed(1)} m`
+   : `移動距離: ${(totalDistance / 1000).toFixed(2)} km`;
 
  if (!marker) {
   marker = L.marker([lat, lng]).addTo(map);
@@ -126,11 +190,8 @@ navigator.geolocation.watchPosition(pos => {
   marker.setLatLng([lat, lng]);
  }
 
- map.setView([lat, lng], 17);
-
 });
 
-// 距離計算
 function getDistance(lat1, lng1, lat2, lng2) {
  const R = 6371000;
  const dLat = (lat2-lat1)*Math.PI/180;
@@ -149,4 +210,3 @@ function getDistance(lat1, lng1, lat2, lng2) {
 
 </body>
 </html>
-``
