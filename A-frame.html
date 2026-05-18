@@ -1,56 +1,152 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS + AR</title>
 
-  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-    }
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-    /* ✅ AR.js の文字・UIを完全に消す */
-    .arjs-loader,
-    .arjs-loader div,
-    .a-enter-vr {
-      display: none !important;
-    }
-  </style>
+<style>
+body {
+ margin: 0;
+ font-family: sans-serif;
+ text-align: center;
+}
+
+#map { height: 70vh; }
+#arView { display: none; }
+
+button {
+ margin: 5px;
+ padding: 10px 20px;
+ font-size: 16px;
+}
+</style>
 </head>
 
 <body>
 
-<a-scene
-  embedded
-  vr-mode-ui="enabled: false"
-  renderer="antialias:true; alpha:true"
-  arjs="sourceType:webcam; debugUIEnabled:false;"
->
+<h2>GPS + AR 切替</h2>
 
-  <a-assets>
-    <a-asset-item id="model" src="./kisya_4.glb"></a-asset-item>
-  </a-assets>
+<button onclick="showMap()">マップ表示</button>
+<button onclick="showAR()">カメラ起動</button>
 
-  <a-entity light="type:ambient; intensity:1.5"></a-entity>
-  <a-entity light="type:directional; intensity:2" position="1 3 2"></a-entity>
+<!-- ================= MAP ================= -->
+<div id="mapView">
+ <div id="map"></div>
+ <p id="speed">速度: 0 km/h</p>
+ <p id="distance">距離: 0 m</p>
+</div>
 
-  <a-marker preset="hiro">
-    <a-entity
-      gltf-model="#model"
-      scale="0.2 0.2 0.2"
-      position="0 0.02 0"
-      animation="property: rotation; to: 0 360 0; dur: 12000; loop: true">
-    </a-entity>
-  </a-marker>
+<!-- ================= AR ================= -->
+<div id="arView">
+ <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+   <a-assets>
+     <a-asset-item id="model" src="Cornet.glb"></a-asset-item>
+   </a-assets>
 
-  <a-entity camera></a-entity>
+   <a-marker preset="hiro">
+     <a-entity gltf-model="#model"
+               scale="0.5 0.5 0.5"
+               position="0 0 0"
+               rotation="0 180 0">
+     </a-entity>
+   </a-marker>
 
-</a-scene>
+   <a-entity camera></a-entity>
+ </a-scene>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+// ================= 表示切替 =================
+function showMap() {
+ document.getElementById("mapView").style.display = "block";
+ document.getElementById("arView").style.display = "none";
+}
+
+function showAR() {
+ document.getElementById("mapView").style.display = "none";
+ document.getElementById("arView").style.display = "block";
+}
+
+// ================= マップ =================
+const map = L.map('map').setView([35.681236, 139.767125], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+ attribution: '© OpenStreetMap'
+}).addTo(map);
+
+let marker;
+let totalDistance = 0;
+let path = [];
+let polyline = L.polyline(path, { color: 'blue' }).addTo(map);
+
+let prevLat = null;
+let prevLng = null;
+
+const speedText = document.getElementById("speed");
+const distanceText = document.getElementById("distance");
+
+navigator.geolocation.watchPosition(pos => {
+ const lat = pos.coords.latitude;
+ const lng = pos.coords.longitude;
+
+ let speed = pos.coords.speed || 0;
+ speed = (speed * 3.6).toFixed(1);
+
+ speedText.textContent = `速度: ${speed} km/h`;
+
+ if (prevLat !== null) {
+  totalDistance += getDistance(prevLat, prevLng, lat, lng);
+ }
+
+ prevLat = lat;
+ prevLng = lng;
+
+ distanceText.textContent =
+  totalDistance < 1000
+   ? `距離: ${totalDistance.toFixed(1)} m`
+   : `距離: ${(totalDistance/1000).toFixed(2)} km`;
+
+ path.push([lat, lng]);
+ polyline.setLatLngs(path);
+
+ if (!marker) {
+  marker = L.marker([lat, lng]).addTo(map);
+ } else {
+  marker.setLatLng([lat, lng]);
+ }
+
+ map.setView([lat, lng], 17);
+
+});
+
+// 距離計算
+function getDistance(lat1, lng1, lat2, lng2) {
+ const R = 6371000;
+ const dLat = (lat2-lat1)*Math.PI/180;
+ const dLng = (lng2-lng1)*Math.PI/180;
+
+ const a =
+  Math.sin(dLat/2)**2 +
+  Math.cos(lat1*Math.PI/180) *
+  Math.cos(lat2*Math.PI/180) *
+  Math.sin(dLng/2)**2;
+
+ const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+ return R*c;
+}
+</script>
 
 </body>
 </html>
+``
