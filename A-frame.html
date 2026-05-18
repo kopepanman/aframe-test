@@ -1,212 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPS + AR</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  </head>
 
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <a-assets>
+        <a-asset-item id="model" src="kisya_4.glb"></a-asset-item>
+      </a-assets>
 
-<!-- A-Frame -->
-<script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+      <!-- マーカー上に表示 -->
+      <a-marker preset="hiro">
+        <a-entity
+          gltf-model="#model"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+          rotation="0 180 0">
+        </a-entity>
+      </a-marker>
 
-<style>
-body { margin: 0; font-family: sans-serif; text-align: center; }
-
-#map { height: 60vh; }
-
-#arContainer {
- position: fixed;
- top: 0;
- left: 0;
- width: 100%;
- height: 100%;
- background: black;
- display: none;
- z-index: 999;
-}
-
-button {
- margin: 5px;
- padding: 10px 20px;
- font-size: 16px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>GPS追跡マップ</h1>
-
-<div id="info">
- <p id="speed">速度: 0 km/h</p>
- <p id="distance">移動距離: 0 m</p>
-
- <div id="gpsData">
-  <p id="latitude">緯度: -</p>
-  <p id="longitude">経度: -</p>
-  <p id="altitude">高度: -</p>
-  <p id="accuracy">精度: -</p>
- </div>
-
- <button id="followBtn">追従: ON</button>
- <button id="resetBtn">リセット</button>
- <button id="toggleGpsBtn">GPS情報を隠す</button>
-
- <!-- ✅ AR起動ボタン追加 -->
- <button onclick="startAR()">📷 カメラ起動</button>
-</div>
-
-<div id="map"></div>
-
-<!-- ✅ AR表示コンテナ -->
-<div id="arContainer"></div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script>
-// ================= AR 起動 =================
-function startAR() {
- const container = document.getElementById("arContainer");
-
- container.style.display = "block";
-
- // ✅ 動的にARシーン生成
- container.innerHTML = `
-  <button onclick="stopAR()" style="position:absolute;z-index:1000;">閉じる</button>
-
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-   <a-assets>
-    <a-asset-item id="model" src="Corn position="0 0 0">
-    </a-entity>
-   </a-marker>
-
-   <a-entity camera></a-entity>
-  </a-scene>
- `;
-}
-
-// ================= AR 停止 =================
-function stopAR() {
- const container = document.getElementById("arContainer");
-
- // ✅ 完全削除（これが超重要）
- container.innerHTML = "";
-
- container.style.display = "none";
-}
-
-// ================= マップ =================
-const map = L.map('map').setView([35.681236, 139.767125], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
- attribution: '© OpenStreetMap'
-}).addTo(map);
-
-const speedText = document.getElementById("speed");
-const distanceText = document.getElementById("distance");
-const followBtn = document.getElementById("followBtn");
-const resetBtn = document.getElementById("resetBtn");
-const toggleGpsBtn = document.getElementById("toggleGpsBtn");
-const gpsData = document.getElementById("gpsData");
-const latitudeText = document.getElementById("latitude");
-const longitudeText = document.getElementById("longitude");
-const altitudeText = document.getElementById("altitude");
-const accuracyText = document.getElementById("accuracy");
-
-let followMode = true;
-followBtn.onclick = () => {
- followMode = !followMode;
- followBtn.textContent = followMode ? "追従: ON" : "追従: OFF";
-};
-
-resetBtn.onclick = () => {
- if (!confirm("リセットしますか？")) return;
- totalDistance = 0;
- distanceText.textContent = "移動距離: 0 m";
- path = [];
- polyline.setLatLngs([]);
- previousLat = null;
- previousLng = null;
- if (marker) map.removeLayer(marker);
- marker = null;
-};
-
-let gpsVisible = true;
-toggleGpsBtn.onclick = () => {
- gpsVisible = !gpsVisible;
- gpsData.style.display = gpsVisible ? "block" : "none";
-};
-
-let marker;
-let path = [];
-let polyline = L.polyline(path, { color: 'blue' }).addTo(map);
-
-let totalDistance = 0;
-let previousLat = null;
-let previousLng = null;
-
-// GPS
-navigator.geolocation.watchPosition(pos => {
- const lat = pos.coords.latitude;
- const lng = pos.coords.longitude;
- const altitude = pos.coords.altitude;
- const accuracy = pos.coords.accuracy;
-
- let speed = pos.coords.speed || 0;
- speed = (speed * 3.6).toFixed(1);
-
- latitudeText.textContent = `緯度: ${lat.toFixed(6)}`;
- longitudeText.textContent = `経度: ${lng.toFixed(6)}`;
- altitudeText.textContent = altitude !== null
-  ? `高度: ${altitude.toFixed(1)} m`
-  : "高度: 取得不可";
- accuracyText.textContent = `精度: ${accuracy.toFixed(1)} m`;
-
- speedText.textContent = `速度: ${speed} km/h`;
-
- if (followMode) map.setView([lat, lng], 17);
-
- path.push([lat, lng]);
- polyline.setLatLngs(path);
-
- if (previousLat !== null) {
-  totalDistance += getDistance(previousLat, previousLng, lat, lng);
- }
-
- previousLat = lat;
- previousLng = lng;
-
- distanceText.textContent =
-  totalDistance < 1000
-   ? `移動距離: ${totalDistance.toFixed(1)} m`
-   : `移動距離: ${(totalDistance / 1000).toFixed(2)} km`;
-
- if (!marker) {
-  marker = L.marker([lat, lng]).addTo(map);
- } else {
-  marker.setLatLng([lat, lng]);
- }
-
-});
-
-function getDistance(lat1, lng1, lat2, lng2) {
- const R = 6371000;
- const dLat = (lat2-lat1)*Math.PI/180;
- const dLng = (lng2-lng1)*Math.PI/180;
-
- const a =
-  Math.sin(dLat/2)**2 +
-  Math.cos(lat1*Math.PI/180) *
-  Math.cos(lat2*Math.PI/180) *
-  Math.sin(dLng/2)**2;
-
- const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
- return R*c;
-}
-</script>
-
-</body>
+      <!-- カメラ -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
