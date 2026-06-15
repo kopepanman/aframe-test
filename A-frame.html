@@ -10,10 +10,17 @@
 
 <body style="margin:0">
 
+<a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
+
     <a-assets>
         <a-asset-item id="spirit" src="kisya_4.glb"></a-asset-item>
     </a-assets>
-    
+
+    <a-camera gps-new-camera></a-camera>
+
     <a-entity
         gps-new-entity-place="
             latitude: 37.95620883531274;
@@ -23,6 +30,8 @@
         scale="1 1 1"
         rotation="0 180 0">
     </a-entity>
+
+</a-scene>
 
 </body>
 </html>
