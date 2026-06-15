@@ -10,23 +10,19 @@
 
 <body style="margin:0">
 
-<a-scene
-    vr-mode-ui="enabled: false"
-    embedded
-    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false">
-
-    <a-camera gps-new-camera></a-camera>
-
-    <a-box
+    <a-assets>
+        <a-asset-item id="spirit" src="kisya_4.glb"></a-asset-item>
+    </a-assets>
+    
+    <a-entity
         gps-new-entity-place="
             latitude: 37.95620883531274;
             longitude: 139.33575732548871;
         "
-        color="red"
-        scale="10 10 10">
-    </a-box>
-
-</a-scene>
+        gltf-model="#spirit"
+        scale="1 1 1"
+        rotation="0 180 0">
+    </a-entity>
 
 </body>
 </html>
