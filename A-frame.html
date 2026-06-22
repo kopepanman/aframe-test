@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GPS AR Test</title>
+  <title>Camera Test</title>
 
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
@@ -17,18 +17,9 @@
 <a-scene
   embedded
   vr-mode-ui="enabled: false"
-  renderer="alpha: true; antialias: true"
   arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <!-- カメラ（AR.js用） -->
-  <a-camera gps-camera rotation-reader></a-camera>
-
-  <!-- オブジェクト -->
-  <a-box
-    gps-new-entity-place="latitude: 37.9439299878297; longitude: 139.33503966606582;"
-    material="color: red"
-    scale="5 5 5">
-  </a-box>
+  <a-camera></a-camera>
 
 </a-scene>
 
