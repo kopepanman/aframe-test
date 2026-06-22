@@ -19,9 +19,13 @@
   vr-mode-ui="enabled: false"
   arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <a-camera></a-camera>
+  <a-camera gps-camera></a-camera>
 
-  <a-box position="0 0 -3" color="red"></a-box>
+<a-box
+  gps-new-entity-place="latitude: 37.956224; longitude: 139.335584;"
+  material="color: red"
+  scale="10 10 10">
+</a-box>
 
 </a-scene>
 
