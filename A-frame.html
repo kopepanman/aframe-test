@@ -2,26 +2,72 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Camera Test</title>
+  <title>GPS AR Full</title>
 
+  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <!-- AR.js -->
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* ローディング時の黒画面対策 */
+    .arjs-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
   </style>
 </head>
 
 <body>
 
+<div class="arjs-loader">
+  カメラ・GPS読み込み中...
+</div>
+
 <a-scene
   embedded
   vr-mode-ui="enabled: false"
+  renderer="logarithmicDepthBuffer: true; alpha: true; antialias: true;"
   arjs="sourceType: webcam; debugUIEnabled: false;">
 
-  <a-camera></a-camera>
+  <!-- カメラ -->
+  <a-camera gps-camera rotation-reader></a-camera>
+
+  <!-- オブジェクト -->
+  <a-box
+    gps-new-entity-place="latitude: 37.9439299878297; longitude: 139.33503966606582;"
+    material="color: red"
+    scale="10 10 10">
+  </a-box>
 
 </a-scene>
+
+<script>
+  // ローダーを消す
+  window.addEventListener("camera-init", () => {
+    document.querySelector(".arjs-loader").style.display = "none";
+  });
+
+  window.addEventListener("gps-camera-update-position", (e) => {
+    console.log("GPS:", e.detail.position);
+  });
+</script>
 
 </body>
 </html>
