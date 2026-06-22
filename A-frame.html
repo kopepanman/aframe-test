@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>AR TEST</title>
-
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-
-  <style>
-    body { margin: 0; overflow: hidden; }
-  </style>
+  <meta charset="utf-8">
+  <title>GPS TEST</title>
 </head>
 
 <body>
+<h1 id="status">GPS待機中...</h1>
 
-<a-scene
-  embedded
-  vr-mode-ui="enabled: false"
-  arjs="sourceType: webcam; debugUIEnabled: false;">
-
-  <a-camera gps-camera></a-camera>
-
-<a-box
-  gps-new-entity-place="latitude: 37.956224; longitude: 139.335584;"
-  material="color: red"
-  scale="10 10 10">
-</a-box>
-
-</a-scene>
+<script>
+navigator.geolocation.watchPosition(
+  (pos) => {
+    document.getElementById("status").innerText =
+      "OK: " + pos.coords.latitude + ", " + pos.coords.longitude;
+  },
+  (err) => {
+    document.getElementById("status").innerText =
+      "ERROR: " + err.message;
+  },
+  { enableHighAccuracy: true }
+);
+</script>
 
 </body>
 </html>
