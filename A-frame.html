@@ -1,28 +1,34 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Location-based AR.js demo</title>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <title>GPS AR Test</title>
 
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-  </head>
+</head>
 
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene
-      vr-mode-ui="enabled: false"
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-    >
-      <a-box
-        material="color: red"
+<body style="margin:0; overflow:hidden;">
+
+<a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false;">
+
+    <!-- GPS座標に配置 -->
+    <a-box
+        color="red"
         gps-entity-place="latitude: 37.956046; longitude: 139.337556;"
-        scale="30 30 30"
-      ></a-box>
+        scale="50 50 50">
+    </a-box>
 
-      <a-camera gps-camera="minDistance:30; maxDistance:100" rotation-reader></a-camera>
-    </a-scene>
-  </body>
+    <!-- カメラ -->
+    <a-camera gps-camera rotation-reader></a-camera>
+
+</a-scene>
+
+</body>
 </html>
