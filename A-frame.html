@@ -1,122 +1,31 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Location Based AR Sample</title>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- AR.js (Location Based) -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <!-- ARシーン -->
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; gpsMinDistance: 5; gpsTimeInterval: 3000;"
+    >
+      <!-- カメラ（GPS対応） -->
+      <a-camera gps-camera rotation-reader></a-camera>
 
-<title>Stable GPS AR</title>
-
-<script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-
-<style>
-#ui {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 10px;
-    font-size: 13px;
-    z-index: 9999;
-    font-family: sans-serif;
-}
-</style>
-</head>
-
-<body style="margin:0; overflow:hidden;">
-
-<div id="ui">GPS初期化中...</div>
-
-<a-scene
-    embedded
-    vr-mode-ui="enabled: false"
-    arjs="sourceType: webcam; debugUIEnabled: false;">
-
-    <!-- 目的地（補正後） -->
-    <a-box id="target"
+      <!-- 指定位置に3Dオブジェクトを配置 -->
+      <a-box
+        gps-entity-place="latitude: 37.95611, 139.337891; longitude:139.337891;"
         color="red"
-        scale="80 80 80">
-    </a-box>
-
-    <!-- カメラ -->
-    <a-camera gps-camera="minDistance:0; maxDistance:500" rotation-reader></a-camera>
-
-</a-scene>
-
-<script>
-
-const targetLat = 37.956038611893014;
-const targetLon = 139.33747326612726;
-
-let originLat = null;
-let originLon = null;
-
-const ui = document.getElementById("ui");
-const box = document.getElementById("target");
-
-// 距離計算（メートル）
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371000;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1*Math.PI/180) *
-        Math.cos(lat2*Math.PI/180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-// 初期位置を基準にする（ズレ補正）
-navigator.geolocation.watchPosition((pos) => {
-
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    const acc = pos.coords.accuracy;
-
-    // 初回を基準点にする
-    if (originLat === null) {
-        originLat = lat;
-        originLon = lon;
-    }
-
-    // 目的地までの距離
-    const dist = getDistance(lat, lon, targetLat, targetLon);
-
-    // UI表示
-    ui.innerHTML =
-        "現在地<br>" +
-        "lat: " + lat.toFixed(6) + "<br>" +
-        "lon: " + lon.toFixed(6) + "<br>" +
-        "精度: " + acc.toFixed(1) + "m<br>" +
-        "目的地まで: " + dist.toFixed(1) + "m";
-
-    // 近づいたら巨大表示（視覚補正）
-    let scale = 80;
-
-    if (dist < 100) scale = 120;
-    if (dist < 50) scale = 160;
-    if (dist < 20) scale = 220;
-
-    box.setAttribute("gps-entity-place",
-        `latitude: ${targetLat}; longitude: ${targetLon};`
-    );
-
-    box.setAttribute("scale", `${scale} ${scale} ${scale}`);
-
-}, (err) => {
-    ui.innerHTML = "GPSエラー: " + err.message;
-}, {
-    enableHighAccuracy: true,
-    maximumAge: 0,
-    timeout: 27000
-});
-
-</script>
-
-</body>
+        depth="2"
+        height="2"
+        width="2"
+      ></a-box>
+    </a-scene>
+  </body>
 </html>
