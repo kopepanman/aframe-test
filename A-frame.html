@@ -449,42 +449,12 @@ window.addEventListener("camera-init", function () {
 window.addEventListener("camera-error", function (e) {
     console.error("カメラエラー", e);
 });
-    //------------------------------------
-    // モデル反転
-    //------------------------------------
-
-    model.setAttribute(
-        "rotation",
-        "0 180 0"
-    );
-
-    model.setAttribute(
-        "scale",
-        scale + " " + scale + " " + scale
-    );
-
-navigator.geolocation.watchPosition(
-
-function(pos){
-
-    updateModels(
-        pos.coords.latitude,
-        pos.coords.longitude
-    );
-
-},
-
-function(){},
-
-{
-
-    enableHighAccuracy:true,
-    maximumAge:0,
-    timeout:10000
-
-}
-
-);
+// すべてのモデルを180°回転
+window.addEventListener("load", () => {
+    document.querySelectorAll("[gltf-model]").forEach(model => {
+        model.setAttribute("rotation", "0 180 0");
+    });
+});
 </script>
 
 </body>
