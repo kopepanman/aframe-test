@@ -1,522 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"><title>AR</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script><!--A-Frame（バージョン1.4.2）-->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script><!--AR.js(A-Frame上でのカメラなど)-->
+  <style>
+  /*デバッグメニューレイアウト 画面の左上（上から10px、左から10px）の位置に固定 背景を少し透けた黒色 文字の色を蛍光の黄緑色枠線 文字の間に10pxの余白 最前面表示 プログラム内の改行を、実際の画面上でもそのまま改行*/
+  #debug{
+    position:fixed;top:10px;left:10px;background:rgba(0,0,0,.7);color:#0f0;padding:10px;z-index:9999;white-space:pre-line
+  }
+    </style>
+  </head>
+    <body>
+      <div id="debug">GPS取得待機中...</div><!--デバッグメニューの初期状態-->
+    <!--VRゴーグル用ボタンを非表示 AR画面をWebページの一部として読み込む スマホカメラの映像を背景として使用 位置情報更新時、５mの移動を検出したらオブジェクト位置を再計算 1000ms毎にGPSチェック-->
+      <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
 
-
-image(13).png
-
-Pasted code.html
-ファイル
-このコードをブラウザで動かしたら画面にモデルが張り付いた
-
-スクリーンショットを見ると、モデルがGPS座標ではなく画面に固定されている状態ですね。
-
-アップロードしてくれたHTMLを見ると、原因が見つかりました。
-
-原因① <a-scene> が二重になっている
-コードの最初が
-
-<a-scene
+    <!--GPSと連動 ジャイロ読み取りカメラ追従 10000m以上のオブジェクト、0.1m以内のオブジェクトを非表示-->           
+   
+    <a-scene
     vr-mode-ui="enabled: false"
     embedded
     arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
-
-<a-scene
-    vr-mode-ui="enabled: false"
-    embedded
-    arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
-となっています。
-
-つまり
-
-<a-scene>
-    <a-scene>
-になっています。
-
-これはA-Frameでは正しくありません。
-
-片方を削除してください。
-
-原因② GPS EntityとCameraが別Scene扱いになっている
-この二重Sceneのせいで
-
-<a-camera gps-camera rotation-reader>
-と
-
-<a-entity gps-entity-place="...">
-が正常に動いていません。
-
-結果として
-
-GPS座標を無視
-↓
-カメラの前に描画
-↓
-画面に張り付く
-という症状になります。
-
-正しい構造
-<a-scene
-    vr-mode-ui="enabled:false"
-    embedded
-    arjs="sourceType:webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
 
     <a-assets>
-        ...
+        <a-asset-item id="hinanModel" src="hinan.glb"></a-asset-item>
     </a-assets>
 
     <a-camera
         gps-camera
         rotation-reader
-        camera="far:10000; near:0.1">
+        camera="far: 10000; near: 0.1">
     </a-camera>
-
-    <a-entity
-        gps-entity-place="latitude:37.95; longitude:139.33;"
-        gltf-model="#hinanModel">
-    </a-entity>
-
-</a-scene>
-原因③
-今使っている
-
-https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js
-はかなり古いAR.jsです。
-
-最近のSafariでは
-
-gps-entity-place
-が正常動作しないことがあります。
-
-以前一緒に動かしていた
-
-https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js
-の方がGPS ARは安定します。
-
-原因④
-画面を見ると
-
-GPS精度 28.0m
-となっています。
-
-28mでは普通は画面中央にモデルが来ることはありません。
-
-なのでGPS精度だけが原因ではなく、コードの構造がおかしい可能性が高いです。
-
-一番怪しい点
-アップロードされたHTMLを見る限り、一番の原因はこれです。
-
-<a-scene>
-が2個あります。
-
-提案
-このHTMLをこちらで修正して、GPS ARが正常に動く完全版（51か所の避難所をそのまま残した状態）を作成できます。修正版なら、モデルが画面に張り付かず、指定したGPS座標に表示されるようにできます。
-
-
-できます。
-しかもHTMLだけで実装できます。
-
-① 距離が遠いほど表示高度を高くする
-各避難所に
-
-position="0 2 0"
-を付けるだけでは固定なので、JavaScriptで距離に応じて高さを変えます。
-
-② 遠くに行くほどモデルを小さくする
-今は
-
-scale="2 2 2"
-で固定ですが、
-
-例えば
-
-距離	倍率
-100m	2
-500m	1.5
-1000m	1
-3000m	0.5
-5000m	0.2
-のように自動変更できます。
-
-③ モデルを反転
-例えば左右反転なら
-
-scale="-2 2 2"
-前後反転なら
-
-rotation="0 180 0"
-ほとんどのGLBなら
-
-rotation="0 180 0"
-でOKです。
-
-おすすめ（かなり見やすい）
-距離によって
-
-100m    高さ2m   倍率2
-500m    高さ8m   倍率1.5
-1000m   高さ15m  倍率1
-3000m   高さ30m  倍率0.5
-5000m   高さ50m  倍率0.3
-10000m  高さ80m  倍率0.2
-にする。
-
-すると
-
-近くでは普通の看板サイズ
-
-遠くでは空に浮かぶ
-
-遠くでも目印になる
-
-近づくとちゃんと地面付近に降りてくる
-
-のでARナビみたいになります。
-
-おすすめなのは…
-51か所全部に自動で適用するJavaScriptを書きます。
-
-そうすれば各
-
-<a-entity>
-を書き換える必要はありません。
-
-HTMLの最後に100行くらい追加するだけで
-
-✅ 距離で高さ変更
-
-✅ 距離で倍率変更
-
-✅ モデル180°反転
-
-✅ 51か所全部自動
-
-になります。
-
-この方法なら、避難所を増やしても自動で対応できます。
-
-
-追加の百行出して。どこに入れるかも教えて
-
-できます。
-このコードは <script> の中に追加してください。
-
-具体的には、Part5で貼った
-
-window.addEventListener("camera-error", function (e) {
-    console.error("カメラエラー", e);
-});
-の直後に追加し、最後の
-
-</script>
-の前に貼り付けます。
-
-つまり、
-
-window.addEventListener("camera-error", function (e) {
-    console.error("カメラエラー", e);
-});
-
-←↓↓↓↓ここに貼る↓↓↓↓
-
-</script>
-です。
-
-追加コード
-// ===============================
-// 距離によって高さ・大きさを変更
-// ===============================
-
-function distance(lat1, lon1, lat2, lon2) {
-
-    const R = 6378137;
-
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function updateModels(lat, lon) {
-
-    const models = document.querySelectorAll("[gps-entity-place]");
-
-    models.forEach(function(model){
-
-        const gps = model.getAttribute("gps-entity-place");
-
-        if(!gps) return;
-
-        const targetLat = parseFloat(gps.latitude);
-        const targetLon = parseFloat(gps.longitude);
-
-        const d = distance(lat, lon, targetLat, targetLon);
-
-        //------------------------------------
-        // 高さ
-        //------------------------------------
-
-        let height = 2;
-
-        if(d > 10000){
-
-            height = 80;
-
-        }else if(d > 5000){
-
-            height = 50;
-
-        }else if(d > 3000){
-
-            height = 30;
-
-        }else if(d > 1000){
-
-            height = 15;
-
-        }else if(d > 500){
-
-            height = 8;
-
-        }else{
-
-            height = 2;
-
-        }
-
-        model.setAttribute(
-            "position",
-            "0 " + height + " 0"
-        );
-
-        //------------------------------------
-        // 大きさ
-        //------------------------------------
-
-        let scale = 2;
-
-        if(d > 10000){
-
-            scale = 0.2;
-
-        }else if(d > 5000){
-
-            scale = 0.3;
-
-        }else if(d > 3000){
-
-            scale = 0.5;
-
-        }else if(d > 1000){
-
-            scale = 1.0;
-
-        }else if(d > 500){
-
-            scale = 1.5;
-
-        }else{
-
-            scale = 2.0;
-
-        }
-
-        //------------------------------------
-        // モデル反転
-        //------------------------------------
-
-        model.setAttribute(
-            "rotation",
-            "0 180 0"
-        );
-
-        model.setAttribute(
-            "scale",
-            scale + " " + scale + " " + scale
-        );
-
-    });
-
-}
-
-navigator.geolocation.watchPosition(
-
-    function(pos){
-
-        updateModels(
-            pos.coords.latitude,
-            pos.coords.longitude
-        );
-
-    },
-
-    function(){},
-
-    {
-
-        enableHighAccuracy:true,
-        maximumAge:0,
-        timeout:10000
-
-    }
-
-);
-このコードでできること
-✅ 51か所すべて自動で処理
-✅ 距離が遠いほど高く浮く（最大80m）
-✅ 距離が遠いほど小さくなる（最大0.2倍）
-✅ モデルを180°回転（反転）
-✅ 避難所を追加しても自動対応
-
-ただし、1点だけ注意があります
-AR.js の gps-entity-place は、ライブラリ側が position を更新する仕組みになっています。そのため、このコードの
-
-model.setAttribute("position", "0 " + height + " 0");
-は、環境によってはライブラリに上書きされて高さが反映されないことがあります。
-
-もし高さだけ変わらない場合は、各モデルを親子構造にする方法（外側の gps-entity-place エンティティの中に、position="0 Y 0" を持つ内側の a-entity を入れる構造）に変更すれば確実に動きます。こちらも必要なら、51か所まとめて使える形で作成します。
-
-
-モデル反転だけにして
-
-もちろんです。
-
-JavaScriptは不要で、モデルを180°反転させるだけなら、すべての <a-entity> に rotation="0 180 0" を追加するだけです。
-
-例えば、今が
-
-<a-entity
-    gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
-    gltf-model="#hinanModel"
-    scale="2 2 2">
-</a-entity>
-なら、
-
-<a-entity
-    gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
-    gltf-model="#hinanModel"
-    rotation="0 180 0"
-    scale="2 2 2">
-</a-entity>
-に変更します。
-
-51か所全部を一括で反転したい場合
-もっと簡単に、JavaScriptで全部まとめて反転できます。
-
-**Part5の <script> の最後（</script> の直前）**に次のコードを追加してください。
-
-// すべてのモデルを180°回転
-window.addEventListener("load", () => {
-    document.querySelectorAll("[gltf-model]").forEach(model => {
-        model.setAttribute("rotation", "0 180 0");
-    });
-});
-これで51か所すべてのモデルが180°反転します。
-
-もし「180°ではなく左右反転（鏡映し）」にしたい場合は方法が異なるので、その場合は教えてください。
-
-
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
+            <!-- ここから51地点分の避難所 hinan.glbを指定座標に2mx2mx2mで表示-->
+    <!-- 新潟県新発田市中央町5-8-9 -->
     <a-entity gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
         gltf-model="#hinanModel"
         scale="2 2 2"></a-entity>
@@ -615,6 +135,170 @@ window.addEventListener("load", () => {
         gltf-model="#hinanModel"
         scale="2 2 2"></a-entity>
 
-html
+    <!-- 新潟県新発田市五十公野4981 -->
+    <a-entity gps-entity-place="latitude:37.9289537; longitude:139.3525705;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
 
-閉じる
+    <!-- 新潟県新発田市法正橋39 -->
+    <a-entity gps-entity-place="latitude:37.90173725; longitude:139.3356871;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市大槻4211-260 -->
+    <a-entity gps-entity-place="latitude:37.88772363; longitude:139.3905308;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市上赤谷2173 -->
+    <a-entity gps-entity-place="latitude:37.83981884; longitude:139.4180246;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市下羽津1938 -->
+    <a-entity gps-entity-place="latitude:37.93460048; longitude:139.3860503;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市下楠川702 -->
+    <a-entity gps-entity-place="latitude:37.93801617; longitude:139.4007062;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市大友17-1 -->
+    <a-entity gps-entity-place="latitude:37.90845212; longitude:139.3878393;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市下羽津1566-1 -->
+    <a-entity gps-entity-place="latitude:37.9339893; longitude:139.3871205;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市繁山70 -->
+    <a-entity gps-entity-place="latitude:37.97162478; longitude:139.4165422;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市黒岩66 -->
+    <a-entity gps-entity-place="latitude:37.964928; longitude:139.3715686;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市上館84-2 -->
+    <a-entity gps-entity-place="latitude:37.97104288; longitude:139.3626871;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市則清856 -->
+    <a-entity gps-entity-place="latitude:37.94441191; longitude:139.281706;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市則清102 -->
+    <a-entity gps-entity-place="latitude:37.94050063; longitude:139.2870939;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+    <!-- 新潟県新発田市曽根570 -->
+    <a-entity gps-entity-place="latitude:37.95392926; longitude:139.2861246;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市小舟町2-3-31 -->
+    <a-entity gps-entity-place="latitude:37.969786; longitude:139.327821;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市大伝465-2 -->
+    <a-entity gps-entity-place="latitude:37.91991131; longitude:139.3108194;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市天王18 -->
+    <a-entity gps-entity-place="latitude:37.90375026; longitude:139.2715007;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市荒町1483 -->
+    <a-entity gps-entity-place="latitude:37.92711174; longitude:139.3288739;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市本田12 -->
+    <a-entity gps-entity-place="latitude:37.88438073; longitude:139.2910726;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市乙次50 -->
+    <a-entity gps-entity-place="latitude:37.91247789; longitude:139.3057793;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市稲荷岡2389 -->
+    <a-entity gps-entity-place="latitude:38.0146328; longitude:139.3178381;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市真野原外1773 -->
+    <a-entity gps-entity-place="latitude:37.9993404; longitude:139.3018339;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市藤塚浜4063-3 -->
+    <a-entity gps-entity-place="latitude:38.03432447; longitude:139.3084049;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市真野原外3499 -->
+    <a-entity gps-entity-place="latitude:38.01546755; longitude:139.3164804;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市大中島37 -->
+    <a-entity gps-entity-place="latitude:38.00520519; longitude:139.3363856;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市上今泉366 -->
+    <a-entity gps-entity-place="latitude:37.9900329; longitude:139.3588473;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市川口330 -->
+    <a-entity gps-entity-place="latitude:37.98968721; longitude:139.3636123;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市住田547-1 -->
+    <a-entity gps-entity-place="latitude:37.98981129; longitude:139.3668789;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市住田547 -->
+    <a-entity gps-entity-place="latitude:37.99005048; longitude:139.367041;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市下小中山1107 -->
+    <a-entity gps-entity-place="latitude:38.0171186; longitude:139.3802821;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+    <!-- 新潟県新発田市押廻1447 -->
+    <a-entity gps-entity-place="latitude:37.98428661; longitude:139.3397351;"
+        gltf-model="#hinanModel"
+        scale="2 2 2"></a-entity>
+
+</a-scene>
+      <script>
+        /*デバッグを取得 ブラウザにあるnavigator機能のgeolocationを監視する 情報を取得したらpにGPS情報を挿入 （）内は精度*/
+        const d=document.getElementById('debug');
+        navigator.geolocation.watchPosition(p=>{d.textContent=`現在位置
+        緯度:${p.coords.latitude.toFixed(8)}
+        経度:${p.coords.longitude.toFixed(8)}
+        GPS精度:${p.coords.accuracy.toFixed(1)} m`;},
+        /*GPS取得失敗時のメッセージ enableHighAccuracy:true高性能GPS timeout:10000GPS取得待機時間（10秒待っても読み込めなければエラー）*/
+        e=>d.textContent=e.message,{enableHighAccuracy:true,maximumAge:0,timeout:10000});
+    </script>
+  </body>
+</html>
