@@ -13,12 +13,7 @@
   </head>
     <body>
       <div id="debug">GPS取得待機中...</div><!--デバッグメニューの初期状態-->
-    <!--VRゴーグル用ボタンを非表示 AR画面をWebページの一部として読み込む スマホカメラの映像を背景として使用 位置情報更新時、５mの移動を検出したらオブジェクト位置を再計算 1000ms毎にGPSチェック-->
-      <a-scene
-      vr-mode-ui="enabled: false"
-      embedded
-      arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
-
+   
     <!--GPSと連動 ジャイロ読み取りカメラ追従 10000m以上のオブジェクト、0.1m以内のオブジェクトを非表示-->           
    
     <a-scene
@@ -36,10 +31,6 @@
         camera="far: 10000; near: 0.1">
     </a-camera>
             <!-- ここから51地点分の避難所 hinan.glbを指定座標に2mx2mx2mで表示-->
-    <!-- 新潟県新発田市中央町5-8-9 -->
-    <a-entity gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
 
     <!-- 新潟県新発田市中央町5-8-9 -->
     <a-entity gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
