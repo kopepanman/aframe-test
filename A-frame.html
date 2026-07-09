@@ -449,6 +449,152 @@ window.addEventListener("camera-init", function () {
 window.addEventListener("camera-error", function (e) {
     console.error("カメラエラー", e);
 });
+
+// ===============================
+// 距離によって高さ・大きさを変更
+// ===============================
+
+function distance(lat1, lon1, lat2, lon2) {
+
+const R = 6378137;
+
+const dLat = (lat2 - lat1) * Math.PI / 180;
+const dLon = (lon2 - lon1) * Math.PI / 180;
+
+const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function updateModels(lat, lon) {
+
+const models = document.querySelectorAll("[gps-entity-place]");
+
+models.forEach(function(model){
+
+    const gps = model.getAttribute("gps-entity-place");
+
+    if(!gps) return;
+
+    const targetLat = parseFloat(gps.latitude);
+    const targetLon = parseFloat(gps.longitude);
+
+    const d = distance(lat, lon, targetLat, targetLon);
+
+    //------------------------------------
+    // 高さ
+    //------------------------------------
+
+    let height = 2;
+
+    if(d > 10000){
+
+        height = 80;
+
+    }else if(d > 5000){
+
+        height = 50;
+
+    }else if(d > 3000){
+
+        height = 30;
+
+    }else if(d > 1000){
+
+        height = 15;
+
+    }else if(d > 500){
+
+        height = 8;
+
+    }else{
+
+        height = 2;
+
+    }
+
+    model.setAttribute(
+        "position",
+        "0 " + height + " 0"
+    );
+
+    //------------------------------------
+    // 大きさ
+    //------------------------------------
+
+    let scale = 2;
+
+    if(d > 10000){
+
+        scale = 0.2;
+
+    }else if(d > 5000){
+
+        scale = 0.3;
+
+    }else if(d > 3000){
+
+        scale = 0.5;
+
+    }else if(d > 1000){
+
+        scale = 1.0;
+
+    }else if(d > 500){
+
+        scale = 1.5;
+
+    }else{
+
+        scale = 2.0;
+
+    }
+
+    //------------------------------------
+    // モデル反転
+    //------------------------------------
+
+    model.setAttribute(
+        "rotation",
+        "0 180 0"
+    );
+
+    model.setAttribute(
+        "scale",
+        scale + " " + scale + " " + scale
+    );
+
+});
+
+}
+
+navigator.geolocation.watchPosition(
+
+function(pos){
+
+    updateModels(
+        pos.coords.latitude,
+        pos.coords.longitude
+    );
+
+},
+
+function(){},
+
+{
+
+    enableHighAccuracy:true,
+    maximumAge:0,
+    timeout:10000
+
+}
+
+);
 </script>
 
 </body>
