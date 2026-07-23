@@ -19,11 +19,7 @@
     <a-scene
     vr-mode-ui="enabled: false"
     embedded
-    arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:10000000;">
-
-    <a-assets>
-        <a-asset-item id="hinanModel" src="SL .glb"></a-asset-item>
-    </a-assets>
+    arjs="sourceType: webcam; gpsMinDistance:5; gpsTimeInterval:1000;">
 
     <a-camera
         gps-camera
@@ -32,254 +28,89 @@
     </a-camera>
             <!-- ここから51地点分の避難所 hinan.glbを指定座標に2mx2mx2mで表示-->
 
-    <!-- 新潟県新発田市中央町5-8-9 -->
-    <a-entity gps-entity-place="latitude:37.9543091; longitude:139.3294243;"
-        gltf-model="#hinanModel"
+    <!--新発田城跡-->
+    <a-entity gps-entity-place="latitude:37.93963891; longitude:139.326001834219947;"
+        gltf-model="shibata_jyo.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市緑町2-7-22 -->
-    <a-entity gps-entity-place="latitude:37.95852752; longitude:139.3337808;"
-        gltf-model="#hinanModel"
+    <!-- 清水園 -->
+    <a-entity gps-entity-place="latitude:37.943791; longitude:139.328785;"
+        gltf-model="kiyomizuen.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市中央町4-11-7 -->
-    <a-entity gps-entity-place="latitude:37.951944; longitude:139.326849;"
-        gltf-model="#hinanModel"
+    <!-- 蔵春閣 -->
+    <a-entity gps-entity-place="latitude:37.94389807273562; longitude:139.3317142467578;"
+        gltf-model="Zousyunkaku.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市本町4-16-83 -->
-    <a-entity gps-entity-place="latitude:37.95043927; longitude:139.3399293;"
-        gltf-model="#hinanModel"
+    <!-- 東公園のSL -->
+    <a-entity gps-entity-place="latitude:37.94367248807764; longitude:139.3323475293261;"
+        gltf-model="SL.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市中央町3-13-3 -->
-    <a-entity gps-entity-place="latitude:37.94876764; longitude:139.3269343;"
-        gltf-model="#hinanModel"
+    <!-- 諏訪神社 -->
+    <a-entity gps-entity-place="latitude:37.944214; longitude:139.332004;"
+        gltf-model="uwazinnzya.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市中曽根町3-8-29 -->
-    <a-entity gps-entity-place="latitude:37.95948376; longitude:139.3084674;"
-        gltf-model="#hinanModel"
+    <!-- 新発田市役所 -->
+    <a-entity gps-entity-place="latitude:37.947839; longitude:139.327160;"
+        gltf-model="siyakusyo.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市住吉町1-7-1 -->
-    <a-entity gps-entity-place="latitude:37.95240021; longitude:139.3117062;"
-        gltf-model="#hinanModel"
+    <!-- 王紋酒造 -->
+    <a-entity gps-entity-place="latitude:37.94436989072327; longitude:139.33066511399528;"
+        gltf-model="Oumon.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市西園町3-1-2 -->
-    <a-entity gps-entity-place="latitude:37.95403457; longitude:139.3199501;"
-        gltf-model="#hinanModel"
+    <!-- 五十公野公園 -->
+    <a-entity gps-entity-place="latitude:37.939869; longitude:139.356680;"
+        gltf-model="iziminino.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市大栄町4-5-33 -->
-    <a-entity gps-entity-place="latitude:37.94367264; longitude:139.3212481;"
-        gltf-model="#hinanModel"
+    <!-- カルチャーセンター -->
+    <a-entity gps-entity-place="latitude:37.950246; longitude:139.338618;"
+        gltf-model="karutya.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市御幸町4-5-25 -->
-    <a-entity gps-entity-place="latitude:37.94139881; longitude:139.3165164;"
-        gltf-model="#hinanModel"
+    <!-- 新発田駅 -->
+    <a-entity gps-entity-place="latitude:37.94413; longitude:139.33510;"
+        gltf-model="shibata_station.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市大栄町6-4-23 -->
-    <a-entity gps-entity-place="latitude:37.94141359; longitude:139.3267353;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市大栄町3-6-6 -->
-    <a-entity gps-entity-place="latitude:37.94110908; longitude:139.3242402;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市新富町1-7-21 -->
-    <a-entity gps-entity-place="latitude:37.95588068; longitude:139.3382848;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市住吉町3-6-22 -->
-    <a-entity gps-entity-place="latitude:37.94628758; longitude:139.3071864;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-    <!-- 新潟県新発田市東新町4-10-8 -->
-    <a-entity gps-entity-place="latitude:37.94562642; longitude:139.3461021;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市豊町4-8-30 -->
-    <a-entity gps-entity-place="latitude:37.942744; longitude:139.341024;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市豊町3-7-6 -->
-    <a-entity gps-entity-place="latitude:37.93963891; longitude:139.3375867;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市板敷521-1 -->
-    <a-entity gps-entity-place="latitude:37.95026131; longitude:139.3511243;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市五十公野4862 -->
-    <a-entity gps-entity-place="latitude:37.92839162; longitude:139.3511368;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市五十公野4981 -->
-    <a-entity gps-entity-place="latitude:37.9289537; longitude:139.3525705;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市法正橋39 -->
-    <a-entity gps-entity-place="latitude:37.90173725; longitude:139.3356871;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市大槻4211-260 -->
-    <a-entity gps-entity-place="latitude:37.88772363; longitude:139.3905308;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市上赤谷2173 -->
-    <a-entity gps-entity-place="latitude:37.83981884; longitude:139.4180246;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市下羽津1938 -->
-    <a-entity gps-entity-place="latitude:37.93460048; longitude:139.3860503;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市下楠川702 -->
-    <a-entity gps-entity-place="latitude:37.93801617; longitude:139.4007062;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市大友17-1 -->
-    <a-entity gps-entity-place="latitude:37.90845212; longitude:139.3878393;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市下羽津1566-1 -->
+    <!-- あやめの湯 -->
     <a-entity gps-entity-place="latitude:37.9339893; longitude:139.3871205;"
-        gltf-model="#hinanModel"
+        gltf-model="ayame.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市繁山70 -->
-    <a-entity gps-entity-place="latitude:37.97162478; longitude:139.4165422;"
-        gltf-model="#hinanModel"
+    <!-- イクネス -->
+    <a-entity gps-entity-place="latitude:37.944357; longitude:139.333388;"
+        gltf-model="ikunesu.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市黒岩66 -->
-    <a-entity gps-entity-place="latitude:37.964928; longitude:139.3715686;"
-        gltf-model="#hinanModel"
+    <!-- 市民文化会館 -->
+    <a-entity gps-entity-place="latitude:37.951722; longitude:139.326564;"
+        gltf-model="simin.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市上館84-2 -->
-    <a-entity gps-entity-place="latitude:37.97104288; longitude:139.3626871;"
-        gltf-model="#hinanModel"
+    <!-- 新発田歴史図書館 -->
+    <a-entity gps-entity-place="latitude:37.9512799091573; longitude:139.327747562921;"
+        gltf-model="tosyokan.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市則清856 -->
-    <a-entity gps-entity-place="latitude:37.94441191; longitude:139.281706;"
-        gltf-model="#hinanModel"
+    <!-- 旧新発田市市役所 -->
+    <a-entity gps-entity-place="latitude:37.950883; longitude:139.327898;"
+        gltf-model="kyusiyakusyo.glb"
         scale="2 2 2"></a-entity>
 
-    <!-- 新潟県新発田市則清102 -->
-    <a-entity gps-entity-place="latitude:37.94050063; longitude:139.2870939;"
-        gltf-model="#hinanModel"
+    <!-- 新潟職能短大 -->
+    <a-entity gps-entity-place="latitude:37.955482; longitude139.338409;"
+        gltf-model="daigaku.glb"
         scale="2 2 2"></a-entity>
-    <!-- 新潟県新発田市曽根570 -->
-    <a-entity gps-entity-place="latitude:37.95392926; longitude:139.2861246;"
-        gltf-model="#hinanModel"
+    <!-- 菊水 -->
+    <a-entity gps-entity-place="latitude:37.960376479226; longitude:139.354291358223;"
+        gltf-model="Funaguchi.glb"
         scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市小舟町2-3-31 -->
-    <a-entity gps-entity-place="latitude:37.969786; longitude:139.327821;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市大伝465-2 -->
-    <a-entity gps-entity-place="latitude:37.91991131; longitude:139.3108194;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市天王18 -->
-    <a-entity gps-entity-place="latitude:37.90375026; longitude:139.2715007;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市荒町1483 -->
-    <a-entity gps-entity-place="latitude:37.92711174; longitude:139.3288739;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市本田12 -->
-    <a-entity gps-entity-place="latitude:37.88438073; longitude:139.2910726;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市乙次50 -->
-    <a-entity gps-entity-place="latitude:37.91247789; longitude:139.3057793;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市稲荷岡2389 -->
-    <a-entity gps-entity-place="latitude:38.0146328; longitude:139.3178381;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市真野原外1773 -->
-    <a-entity gps-entity-place="latitude:37.9993404; longitude:139.3018339;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市藤塚浜4063-3 -->
-    <a-entity gps-entity-place="latitude:38.03432447; longitude:139.3084049;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市真野原外3499 -->
-    <a-entity gps-entity-place="latitude:38.01546755; longitude:139.3164804;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市大中島37 -->
-    <a-entity gps-entity-place="latitude:38.00520519; longitude:139.3363856;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市上今泉366 -->
-    <a-entity gps-entity-place="latitude:37.9900329; longitude:139.3588473;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市川口330 -->
-    <a-entity gps-entity-place="latitude:37.98968721; longitude:139.3636123;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市住田547-1 -->
-    <a-entity gps-entity-place="latitude:37.98981129; longitude:139.3668789;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市住田547 -->
-    <a-entity gps-entity-place="latitude:37.99005048; longitude:139.367041;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市下小中山1107 -->
-    <a-entity gps-entity-place="latitude:38.0171186; longitude:139.3802821;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
-    <!-- 新潟県新発田市押廻1447 -->
-    <a-entity gps-entity-place="latitude:37.98428661; longitude:139.3397351;"
-        gltf-model="#hinanModel"
-        scale="2 2 2"></a-entity>
-
 </a-scene>
       <script>
         /*デバッグを取得 ブラウザにあるnavigator機能のgeolocationを監視する 情報を取得したらpにGPS情報を挿入 （）内は精度*/
