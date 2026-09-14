@@ -52,7 +52,6 @@ html,body{
   font-weight:bold;
 }
 
-/* コンパス有効化ボタン */
 #compassButton{
   position:fixed;
   left:50%;
@@ -69,24 +68,6 @@ html,body{
   box-shadow:0 4px 12px rgba(0,0,0,.35);
 }
 
-/* コンパス表示切替ボタン */
-#compassToggle{
-  position:fixed;
-  left:50%;
-  bottom:125px;
-  transform:translateX(-50%);
-  z-index:10000;
-  border:none;
-  border-radius:10px;
-  padding:10px 18px;
-  background:rgba(0,0,0,.65);
-  color:#fff;
-  font-size:14px;
-  font-weight:bold;
-  display:none;
-}
-
-/* 矢印の情報 */
 #arrowInfo{
   position:fixed;
   left:50%;
@@ -107,26 +88,18 @@ html,body{
 
 <body>
 
-<div id="debug">
-GPS取得待機中...
-</div>
+<div id="debug">GPS取得待機中...</div>
 
 <button id="compassButton">
-🧭 コンパスを有効にする
-</button>
-
-<button id="compassToggle">
-🧭 コンパスを非表示
+  🧭 コンパスを有効にする
 </button>
 
 <div id="arrowInfo">
-方向を取得中...
+  方向を取得中...
 </div>
 
 <div id="back">
-<button onclick="location.href='index.html'">
-← ホーム
-</button>
+  <button onclick="location.href='index.html'">← ホーム</button>
 </div>
 
 <a-scene
@@ -135,120 +108,118 @@ vr-mode-ui="enabled:false"
 embedded
 arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:false;">
 
+  <!-- ========================= -->
+
+  <!-- カメラ -->
+
+  <!-- ========================= -->
+
 <a-camera
-id="camera"
-gps-camera
-rotation-reader
-camera="far:10000;near:0.1">
+ id="camera"
+ gps-camera
+ rotation-reader
+ camera="far:10000;near:0.1">
 
-<!-- =====================================================
-     カメラ前の方向矢印
-     
-     前のバージョンと同じ方式。
-     Z軸を使って画面内で回転させる。
-===================================================== -->
+```
+<!-- ========================= -->
+<!-- カメラ前に浮かぶ方向矢印 -->
+<!-- ========================= -->
 
 <a-entity
-id="directionArrow"
-position="0 0 -3"
-visible="false">
+  id="directionArrow"
+  position="0 0 -3"
+  visible="false">
 
-<!-- 矢印の棒 -->
+  <!-- 矢印の棒 -->
+  <a-cylinder
+    position="0 -0.35 0"
+    radius="0.07"
+    height="0.7"
+    rotation="0 0 0">
+  </a-cylinder>
 
-<a-cylinder
-position="0 -0.25 0"
-radius="0.045"
-height="0.5"
-rotation="0 0 0">
-</a-cylinder>
-
-<!-- 矢印の先 -->
-
-<a-cone
-position="0 0.12 0"
-radius-bottom="0.16"
-radius-top="0"
-height="0.32"
-rotation="0 0 0">
-</a-cone>
+  <!-- 矢印の先 -->
+  <a-cone
+    position="0 0.25 0"
+    radius-bottom="0.25"
+    radius-top="0"
+    height="0.5"
+    rotation="0 0 0">
+  </a-cone>
 
 </a-entity>
+```
 
-</a-camera>
+  </a-camera>
 
-<!-- =====================================================
-     観光ARモデル
-===================================================== -->
+  <!-- ========================= -->
+
+  <!-- 観光ARモデル -->
+
+  <!-- ========================= -->
 
 <a-entity
-id="model-castle"
-gps-entity-place="latitude:37.954824724542696;longitude:139.326001834219947;"
-gltf-model="shibata_jyo.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-castle"
+ gps-entity-place="latitude:37.954824724542696;longitude:139.326001834219947;"
+ gltf-model="shibata_jyo.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-zousyunkaku"
-gps-entity-place="latitude:37.94389807273562;longitude:139.3317142467578;"
-gltf-model="Zousyunkaku.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-zousyunkaku"
+ gps-entity-place="latitude:37.94389807273562;longitude:139.3317142467578;"
+ gltf-model="Zousyunkaku.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-sl"
-gps-entity-place="latitude:37.94367248807764;longitude:139.3323475293261;"
-gltf-model="SL.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-sl"
+ gps-entity-place="latitude:37.94367248807764;longitude:139.3323475293261;"
+ gltf-model="SL.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-oumon"
-gps-entity-place="latitude:37.94436989072327;longitude:139.33066511399528;"
-gltf-model="Oumon.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-oumon"
+ gps-entity-place="latitude:37.94436989072327;longitude:139.33066511399528;"
+ gltf-model="Oumon.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-station"
-gps-entity-place="latitude:37.94413;longitude:139.33510;"
-gltf-model="shibata_station.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-station"
+ gps-entity-place="latitude:37.94413;longitude:139.33510;"
+ gltf-model="shibata_station.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-menchi"
-gps-entity-place="latitude:37.93682;longitude:139.34488;"
-gltf-model="Menchikatsu.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-menchi"
+ gps-entity-place="latitude:37.93682;longitude:139.34488;"
+ gltf-model="Menchikatsu.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 <a-entity
-id="model-hellotore"
-gps-entity-place="latitude:37.95588068;longitude:139.3382848;"
-gltf-model="hellotore_kun.glb"
-scale="1 1 1"
-position="0 2 0"
-rotation="0 180 0"
-visible="false">
-</a-entity>
+ id="model-hellotore"
+ gps-entity-place="latitude:37.95588068;longitude:139.3382848;"
+ gltf-model="hellotore_kun.glb"
+ scale="1 1 1"
+ position="0 2 0"
+ rotation="0 180 0"
+ visible="false"> </a-entity>
 
 </a-scene>
 
@@ -257,37 +228,17 @@ visible="false">
 <script src="collection-tracker.js"></script>
 
 <script>
-
 /* =========================================================
-   DOM
+   基本設定
 ========================================================= */
 
-const debug =
-document.getElementById("debug");
-
-const arrow =
-document.getElementById("directionArrow");
-
-const arrowInfo =
-document.getElementById("arrowInfo");
-
-const compassButton =
-document.getElementById("compassButton");
-
-const compassToggle =
-document.getElementById("compassToggle");
-
-/* =========================================================
-   設定
-========================================================= */
+const debug = document.getElementById("debug");
+const arrow = document.getElementById("directionArrow");
+const arrowInfo = document.getElementById("arrowInfo");
+const compassButton = document.getElementById("compassButton");
 
 const ACTIVE_RADIUS = 300;
 
-/* =========================================================
-   コンパス表示状態
-========================================================= */
-
-let compassVisible = true;
 
 /* =========================================================
    観光スポット
@@ -295,71 +246,71 @@ let compassVisible = true;
 
 const spots = [
 
-{
-id:"castle",
-name:"新発田城",
-lat:37.954824724542696,
-lng:139.326001834219947,
-model:"shibata_jyo.glb",
-scale:"1 1 1"
-},
+  {
+    id:"castle",
+    name:"新発田城",
+    lat:37.954824724542696,
+    lng:139.326001834219947,
+    model:"shibata_jyo.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"zousyunkaku",
-name:"蔵春閣",
-lat:37.94389807273562,
-lng:139.3317142467578,
-model:"Zousyunkaku.glb",
-scale:"1 1 1"
-},
+  {
+    id:"zousyunkaku",
+    name:"蔵春閣",
+    lat:37.94389807273562,
+    lng:139.3317142467578,
+    model:"Zousyunkaku.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"sl",
-name:"東公園のSL",
-lat:37.94367248807764,
-lng:139.3323475293261,
-model:"SL.glb",
-scale:"1 1 1"
-},
+  {
+    id:"sl",
+    name:"東公園のSL",
+    lat:37.94367248807764,
+    lng:139.3323475293261,
+    model:"SL.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"oumon",
-name:"王紋酒造",
-lat:37.94436989072327,
-lng:139.33066511399528,
-model:"Oumon.glb",
-scale:"1 1 1"
-},
+  {
+    id:"oumon",
+    name:"王紋酒造",
+    lat:37.94436989072327,
+    lng:139.33066511399528,
+    model:"Oumon.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"station",
-name:"新発田駅",
-lat:37.94413,
-lng:37.94413,
-lng:139.33510,
-model:"shibata_station.glb",
-scale:"1 1 1"
-},
+  {
+    id:"station",
+    name:"新発田駅",
+    lat:37.94413,
+    lng:139.33510,
+    model:"shibata_station.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"menchi",
-name:"五十公野メンチカツや",
-lat:37.93682,
-lng:139.34488,
-model:"Menchikatsu.glb",
-scale:"1 1 1"
-},
+  {
+    id:"menchi",
+    name:"五十公野メンチカツや",
+    lat:37.93682,
+    lng:139.34488,
+    model:"Menchikatsu.glb",
+    scale:"1 1 1"
+  },
 
-{
-id:"hellotore",
-name:"新潟職業能力開発短期大学校",
-lat:37.95588068,
-lng:139.3382848,
-model:"hellotore_kun.glb",
-scale:"1 1 1"
-}
+  {
+    id:"hellotore",
+    name:"新潟職業能力開発短期大学校",
+    lat:37.95588068,
+    lng:139.3382848,
+    model:"hellotore_kun.glb",
+    scale:"1 1 1"
+  }
 
 ];
+
 
 /* =========================================================
    モデル読み込み状態
@@ -369,152 +320,117 @@ const states = new Map();
 
 spots.forEach(spot => {
 
-const entity =
-document.getElementById(
-`model-${spot.id}`
-);
+  const entity =
+    document.getElementById(`model-${spot.id}`);
 
-states.set(
-spot.id,
-"読み込み中"
-);
+  states.set(spot.id,"読み込み中");
 
-entity.addEventListener(
-"model-loaded",
-() => {
+  entity.addEventListener(
+    "model-loaded",
+    () => {
+      states.set(spot.id,"読込成功");
+    }
+  );
 
-states.set(
-spot.id,
-"読込成功"
-);
-
-});
-
-entity.addEventListener(
-"model-error",
-e => {
-
-states.set(
-spot.id,
-"読込失敗"
-);
-
-console.error(
-spot.name,
-e.detail
-);
+  entity.addEventListener(
+    "model-error",
+    e => {
+      states.set(spot.id,"読込失敗");
+      console.error(spot.name,e.detail);
+    }
+  );
 
 });
 
-});
 
 /* =========================================================
    GPS計算
 ========================================================= */
 
 function rad(v){
-
-return v * Math.PI / 180;
-
+  return v * Math.PI / 180;
 }
+
 
 function distanceMeters(
-lat1,
-lng1,
-lat2,
-lng2
+  lat1,
+  lng1,
+  lat2,
+  lng2
 ){
 
-const R = 6371000;
+  const R = 6371000;
 
-const dLat =
-rad(lat2-lat1);
+  const dLat = rad(lat2-lat1);
+  const dLng = rad(lng2-lng1);
 
-const dLng =
-rad(lng2-lng1);
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(rad(lat1)) *
+    Math.cos(rad(lat2)) *
+    Math.sin(dLng/2)**2;
 
-const a =
-Math.sin(dLat/2)**2 +
-Math.cos(rad(lat1)) *
-Math.cos(rad(lat2)) *
-Math.sin(dLng/2)**2;
-
-return R * 2 *
-Math.atan2(
-Math.sqrt(a),
-Math.sqrt(1-a)
-);
-
+  return R * 2 *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
 }
+
 
 /* =========================================================
    目的地の方位角
 ========================================================= */
 
 function bearingDegrees(
-lat1,
-lng1,
-lat2,
-lng2
+  lat1,
+  lng1,
+  lat2,
+  lng2
 ){
 
-const y =
-Math.sin(
-rad(lng2-lng1)
-) *
-Math.cos(
-rad(lat2)
-);
+  const y =
+    Math.sin(rad(lng2-lng1)) *
+    Math.cos(rad(lat2));
 
-const x =
-Math.cos(
-rad(lat1)
-) *
-Math.sin(
-rad(lat2)
-) -
-Math.sin(
-rad(lat1)
-) *
-Math.cos(
-rad(lat2)
-) *
-Math.cos(
-rad(lng2-lng1)
-);
+  const x =
+    Math.cos(rad(lat1)) *
+    Math.sin(rad(lat2)) -
+    Math.sin(rad(lat1)) *
+    Math.cos(rad(lat2)) *
+    Math.cos(rad(lng2-lng1));
 
-let bearing =
-Math.atan2(y,x)
-* 180 / Math.PI;
+  let bearing =
+    Math.atan2(y,x) * 180 / Math.PI;
 
-bearing =
-(bearing + 360) % 360;
+  bearing =
+    (bearing + 360) % 360;
 
-return bearing;
-
+  return bearing;
 }
 
+
 /* =========================================================
-   角度を -180～180
+   角度を -180～180 にする
 ========================================================= */
 
 function normalizeAngle(angle){
 
-return (
-(angle + 540) % 360
-) - 180;
+  return (
+    (angle + 540) % 360
+  ) - 180;
 
 }
 
+
 /* =========================================================
-   現在位置
+   現在位置・最寄りスポット
 ========================================================= */
 
 let currentPosition = null;
-
 let nearestSpot = null;
-
 let nearestDistance = Infinity;
+
 
 /* =========================================================
    コンパス
@@ -522,115 +438,64 @@ let nearestDistance = Infinity;
 
 let currentHeading = null;
 
-/* =========================================================
-   コンパス表示切替
-========================================================= */
 
-function updateCompassVisibility(){
-
-if(compassVisible){
-
-arrow.setAttribute(
-"visible",
-true
-);
-
-arrowInfo.style.display =
-"block";
-
-compassToggle.textContent =
-"🧭 コンパスを非表示";
-
-}else{
-
-arrow.setAttribute(
-"visible",
-false
-);
-
-arrowInfo.style.display =
-"none";
-
-compassToggle.textContent =
-"🧭 コンパスを表示";
-
-}
-
-}
-
-/* =========================================================
-   コンパス非表示ボタン
-========================================================= */
-
-compassToggle.addEventListener(
-"click",
-()=>{
-
-compassVisible =
-!compassVisible;
-
-updateCompassVisibility();
-
-}
-);
-
-/* =========================================================
-   iPhone Safari コンパス許可
-========================================================= */
+/*
+   iPhone Safariでは
+   DeviceOrientationEvent.requestPermission()
+   が必要
+*/
 
 async function enableCompass(){
 
-try{
+  try{
 
-if(
-typeof DeviceOrientationEvent !== "undefined" &&
-typeof DeviceOrientationEvent.requestPermission === "function"
-){
+    if(
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ){
 
-const permission =
-await DeviceOrientationEvent.requestPermission();
+      const permission =
+        await DeviceOrientationEvent.requestPermission();
 
-if(permission !== "granted"){
+      if(permission !== "granted"){
 
-arrowInfo.textContent =
-"コンパスの許可が必要です";
+        arrowInfo.textContent =
+          "コンパスの許可が必要です";
 
-return;
+        return;
 
-}
+      }
 
-}
+    }
 
-window.addEventListener(
-"deviceorientation",
-handleOrientation,
-true
-);
+    window.addEventListener(
+      "deviceorientation",
+      handleOrientation,
+      true
+    );
 
-compassButton.style.display =
-"none";
+    compassButton.style.display = "none";
 
-compassToggle.style.display =
-"block";
+    arrowInfo.textContent =
+      "コンパス有効";
 
-arrowInfo.textContent =
-"🧭 コンパス有効";
+  }catch(error){
 
-}catch(error){
+    console.error(error);
 
-console.error(error);
+    arrowInfo.textContent =
+      "コンパスを利用できません";
 
-arrowInfo.textContent =
-"コンパスを利用できません";
+  }
 
 }
 
-}
 
 compassButton.addEventListener(
-"click",
-enableCompass
+  "click",
+  enableCompass
 );
+
 
 /* =========================================================
    スマホの向きを取得
@@ -638,42 +503,47 @@ enableCompass
 
 function handleOrientation(event){
 
-let heading = null;
+  let heading = null;
 
-/* iPhone Safari */
 
-if(
-typeof event.webkitCompassHeading === "number" &&
-event.webkitCompassHeading >= 0
-){
+  /*
+     iPhone Safari
+  */
 
-heading =
-event.webkitCompassHeading;
+  if(
+    typeof event.webkitCompassHeading === "number" &&
+    event.webkitCompassHeading >= 0
+  ){
+
+    heading = event.webkitCompassHeading;
+
+  }
+
+
+  /*
+     Androidなど
+  */
+
+  else if(
+    event.absolute === true &&
+    typeof event.alpha === "number"
+  ){
+
+    heading = 360 - event.alpha;
+
+  }
+
+
+  if(heading !== null){
+
+    currentHeading = heading;
+
+    updateArrow();
+
+  }
 
 }
 
-/* Androidなど */
-
-else if(
-event.absolute === true &&
-typeof event.alpha === "number"
-){
-
-heading =
-360 - event.alpha;
-
-}
-
-if(heading !== null){
-
-currentHeading =
-(heading + 360) % 360;
-
-updateArrow();
-
-}
-
-}
 
 /* =========================================================
    AR矢印更新
@@ -681,151 +551,133 @@ updateArrow();
 
 function updateArrow(){
 
-if(
-!currentPosition ||
-!nearestSpot ||
-currentHeading === null
-){
+  if(
+    !currentPosition ||
+    !nearestSpot ||
+    currentHeading === null
+  ){
 
-arrow.setAttribute(
-"visible",
-false
-);
+    arrow.setAttribute(
+      "visible",
+      false
+    );
 
-return;
+    return;
 
-}
+  }
 
-/* コンパスを非表示にしている場合 */
 
-if(!compassVisible){
+  const targetBearing =
+    bearingDegrees(
+      currentPosition.lat,
+      currentPosition.lng,
+      nearestSpot.lat,
+      nearestSpot.lng
+    );
 
-arrow.setAttribute(
-"visible",
-false
-);
 
-return;
+  /*
+     目的地とスマホの向きの差
+  */
 
-}
+  const difference =
+    normalizeAngle(
+      targetBearing - currentHeading
+    );
 
-/* 目的地の方角 */
 
-const targetBearing =
-bearingDegrees(
-currentPosition.lat,
-currentPosition.lng,
-nearestSpot.lat,
-nearestSpot.lng
-);
+  /*
+     A-Frameの矢印は最初は上向き。
+     Z回転で左右に向ける。
+  */
 
-/* スマホ正面から見た角度 */
+  arrow.setAttribute(
+    "rotation",
+    `0 0 ${-difference}`
+  );
 
-const difference =
-normalizeAngle(
-targetBearing -
-currentHeading
-);
 
-/* =====================================================
-   前のバージョンと同じZ軸回転
-===================================================== */
+  arrow.setAttribute(
+    "visible",
+    true
+  );
 
-arrow.setAttribute(
-"rotation",
-`0 0 ${-difference}`
-);
 
-/* 表示 */
+  /*
+     表示テキスト
+  */
 
-arrow.setAttribute(
-"visible",
-true
-);
+  let directionText = "";
 
-/* =====================================================
-   方向文字
-===================================================== */
 
-let directionText;
+  if(
+    Math.abs(difference) < 15
+  ){
 
-if(
-Math.abs(difference) < 15
-){
+    directionText = "⬆ 正面";
 
-directionText =
-"⬆ 正面";
+  }
 
-}
+  else if(difference > 0 && difference < 180){
 
-else if(
-difference > 0 &&
-difference < 180
-){
+    directionText = "➡ 右";
 
-directionText =
-"➡ 右";
+  }
 
-}
+  else if(difference < 0 && difference > -180){
 
-else if(
-difference < 0 &&
-difference > -180
-){
+    directionText = "⬅ 左";
 
-directionText =
-"⬅ 左";
+  }
+
+  else{
+
+    directionText = "⬇ 後ろ";
+
+  }
+
+
+  arrowInfo.textContent =
+    `${directionText}\n` +
+    `${nearestSpot.name} ${nearestDistance.toFixed(1)}m`;
 
 }
 
-else{
-
-directionText =
-"⬇ 後ろ";
-
-}
-
-/* =====================================================
-   画面表示
-===================================================== */
-
-arrowInfo.textContent =
-`${directionText}\n` +
-`${nearestSpot.name}　${nearestDistance.toFixed(1)}m`;
-
-}
 
 /* =========================================================
    最寄りモデルだけ表示
 ========================================================= */
 
 function showOnlyNearestModel(
-nearest,
-nearestDistance
+  nearest,
+  nearestDistance
 ){
 
-const activeId =
-nearestDistance <= ACTIVE_RADIUS
-? nearest.id
-: null;
+  const activeId =
+    nearestDistance <= ACTIVE_RADIUS
+      ? nearest.id
+      : null;
 
-spots.forEach(spot => {
 
-const entity =
-document.getElementById(
-`model-${spot.id}`
-);
+  spots.forEach(spot => {
 
-entity.setAttribute(
-"visible",
-spot.id === activeId
-);
+    const entity =
+      document.getElementById(
+        `model-${spot.id}`
+      );
 
-});
+    entity.setAttribute(
+      "visible",
+      spot.id === activeId
+    );
 
-return activeId;
+  });
+
+
+  return activeId;
 
 }
+
 
 /* =========================================================
    GPS取得
@@ -833,80 +685,71 @@ return activeId;
 
 navigator.geolocation.watchPosition(
 
-p => {
+  p => {
 
-const lat =
-p.coords.latitude;
+    const lat =
+      p.coords.latitude;
 
-const lng =
-p.coords.longitude;
+    const lng =
+      p.coords.longitude;
 
-const accuracy =
-p.coords.accuracy;
+    const accuracy =
+      p.coords.accuracy;
 
-/* 現在位置 */
 
-currentPosition = {
-lat:lat,
-lng:lng
-};
+    currentPosition = {
+      lat:lat,
+      lng:lng
+    };
 
-/* 最寄りスポット検索 */
 
-nearestSpot = null;
+    nearestSpot = null;
+    nearestDistance = Infinity;
 
-nearestDistance = Infinity;
 
-spots.forEach(spot => {
+    spots.forEach(spot => {
 
-const d =
-distanceMeters(
-lat,
-lng,
-spot.lat,
-spot.lng
-);
+      const d =
+        distanceMeters(
+          lat,
+          lng,
+          spot.lat,
+          spot.lng
+        );
 
-if(
-d < nearestDistance
-){
 
-nearestDistance = d;
+      if(d < nearestDistance){
 
-nearestSpot = spot;
+        nearestDistance = d;
+        nearestSpot = spot;
 
-}
+      }
 
-});
+    });
 
-/* 最寄りモデル表示 */
 
-const activeId =
-showOnlyNearestModel(
-nearestSpot,
-nearestDistance
-);
+    /*
+       最寄りモデル表示
+    */
 
-const active =
-activeId
-? `${nearestSpot.name}:${states.get(activeId) || "準備中"}`
-: "なし";
+    const activeId =
+      showOnlyNearestModel(
+        nearestSpot,
+        nearestDistance
+      );
 
-/* 目的地方位 */
 
-const targetBearing =
-nearestSpot
-? bearingDegrees(
-lat,
-lng,
-nearestSpot.lat,
-nearestSpot.lng
-)
-: null;
+    const active =
+      activeId
+        ? `${nearestSpot.name}:${states.get(activeId) || "準備中"}`
+        : "なし";
 
-/* デバッグ */
 
-debug.textContent =
+    /*
+       デバッグ表示
+    */
+
+    debug.textContent =
 `現在位置
 緯度:${lat.toFixed(8)}
 経度:${lng.toFixed(8)}
@@ -914,50 +757,48 @@ GPS精度:${accuracy.toFixed(1)} m
 
 最寄り:${nearestSpot ? nearestSpot.name : "-"}
 距離:${nearestDistance < Infinity ? nearestDistance.toFixed(1) : "-"} m
+設置座標:${nearestSpot ? `${nearestSpot.lat}, ${nearestSpot.lng}` : "-"}
 
-設置座標:${
-nearestSpot
-? `${nearestSpot.lat}, ${nearestSpot.lng}`
-: "-"
-}
-
-スマホ方位:${
-currentHeading !== null
-? currentHeading.toFixed(1) + "°"
-: "取得待ち"
-}
+スマホ方位:${currentHeading !== null ? currentHeading.toFixed(1) + "°" : "取得待ち"}
 
 目的地方位:${
-targetBearing !== null
-? targetBearing.toFixed(1) + "°"
-: "-"
+  nearestSpot
+    ? bearingDegrees(
+        lat,
+        lng,
+        nearestSpot.lat,
+        nearestSpot.lng
+      ).toFixed(1) + "°"
+    : "-"
 }
 
 300m以内のモデル
 ${active}`;
 
-/* 矢印更新 */
 
-updateArrow();
+    /*
+       矢印更新
+    */
 
-},
+    updateArrow();
 
-e => {
+  },
 
-debug.textContent =
+  e => {
+
+    debug.textContent =
 `位置情報エラー
 ${e.message}`;
 
-},
+  },
 
-{
-enableHighAccuracy:true,
-maximumAge:0,
-timeout:15000
-}
+  {
+    enableHighAccuracy:true,
+    maximumAge:0,
+    timeout:15000
+  }
 
 );
-
 </script>
 
 </body>
