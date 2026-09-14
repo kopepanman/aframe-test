@@ -52,6 +52,7 @@ html,body{
   font-weight:bold;
 }
 
+/* コンパス有効化ボタン */
 #compassButton{
   position:fixed;
   left:50%;
@@ -68,6 +69,24 @@ html,body{
   box-shadow:0 4px 12px rgba(0,0,0,.35);
 }
 
+/* コンパス表示切替ボタン */
+#compassToggle{
+  position:fixed;
+  left:50%;
+  bottom:125px;
+  transform:translateX(-50%);
+  z-index:10000;
+  border:none;
+  border-radius:10px;
+  padding:10px 18px;
+  background:rgba(0,0,0,.65);
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  display:none;
+}
+
+/* 矢印の情報 */
 #arrowInfo{
   position:fixed;
   left:50%;
@@ -96,6 +115,10 @@ GPS取得待機中...
 🧭 コンパスを有効にする
 </button>
 
+<button id="compassToggle">
+🧭 コンパスを非表示
+</button>
+
 <div id="arrowInfo">
 方向を取得中...
 </div>
@@ -112,10 +135,6 @@ vr-mode-ui="enabled:false"
 embedded
 arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:false;">
 
-<!-- =====================================================
-     カメラ
-===================================================== -->
-
 <a-camera
 id="camera"
 gps-camera
@@ -123,39 +142,35 @@ rotation-reader
 camera="far:10000;near:0.1">
 
 <!-- =====================================================
-     カメラの目の前に浮かぶ方向矢印
+     カメラ前の方向矢印
      
-     スマホを地面に対して垂直に持った場合、
-     画面の左右方向はカメラのX-Y平面になる。
-     
-     矢印はカメラの子要素なので、
-     常に画面の前に表示される。
+     前のバージョンと同じ方式。
+     Z軸を使って画面内で回転させる。
 ===================================================== -->
 
 <a-entity
 id="directionArrow"
 position="0 0 -3"
-rotation="0 0 0"
 visible="false">
 
-<!-- 矢印本体 -->
+<!-- 矢印の棒 -->
 
 <a-cylinder
-id="arrowBody"
-position="0 0 0"
-radius="0.07"
-height="0.9"
-rotation="0 0 90"> </a-cylinder>
+position="0 -0.25 0"
+radius="0.045"
+height="0.5"
+rotation="0 0 0">
+</a-cylinder>
 
 <!-- 矢印の先 -->
 
 <a-cone
-id="arrowHead"
-position="0.48 0 0"
-radius-bottom="0.25"
+position="0 0.12 0"
+radius-bottom="0.16"
 radius-top="0"
-height="0.5"
-rotation="0 0 -90"> </a-cone>
+height="0.32"
+rotation="0 0 0">
+</a-cone>
 
 </a-entity>
 
@@ -172,7 +187,8 @@ gltf-model="shibata_jyo.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-zousyunkaku"
@@ -181,7 +197,8 @@ gltf-model="Zousyunkaku.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-sl"
@@ -190,7 +207,8 @@ gltf-model="SL.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-oumon"
@@ -199,7 +217,8 @@ gltf-model="Oumon.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-station"
@@ -208,7 +227,8 @@ gltf-model="shibata_station.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-menchi"
@@ -217,7 +237,8 @@ gltf-model="Menchikatsu.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 <a-entity
 id="model-hellotore"
@@ -226,7 +247,8 @@ gltf-model="hellotore_kun.glb"
 scale="1 1 1"
 position="0 2 0"
 rotation="0 180 0"
-visible="false"> </a-entity>
+visible="false">
+</a-entity>
 
 </a-scene>
 
@@ -252,6 +274,8 @@ document.getElementById("arrowInfo");
 const compassButton =
 document.getElementById("compassButton");
 
+const compassToggle =
+document.getElementById("compassToggle");
 
 /* =========================================================
    設定
@@ -259,6 +283,11 @@ document.getElementById("compassButton");
 
 const ACTIVE_RADIUS = 300;
 
+/* =========================================================
+   コンパス表示状態
+========================================================= */
+
+let compassVisible = true;
 
 /* =========================================================
    観光スポット
@@ -306,6 +335,7 @@ scale:"1 1 1"
 id:"station",
 name:"新発田駅",
 lat:37.94413,
+lng:37.94413,
 lng:139.33510,
 model:"shibata_station.glb",
 scale:"1 1 1"
@@ -330,7 +360,6 @@ scale:"1 1 1"
 }
 
 ];
-
 
 /* =========================================================
    モデル読み込み状態
@@ -379,7 +408,6 @@ e.detail
 
 });
 
-
 /* =========================================================
    GPS計算
 ========================================================= */
@@ -389,7 +417,6 @@ function rad(v){
 return v * Math.PI / 180;
 
 }
-
 
 function distanceMeters(
 lat1,
@@ -419,7 +446,6 @@ Math.sqrt(1-a)
 );
 
 }
-
 
 /* =========================================================
    目的地の方位角
@@ -468,9 +494,8 @@ return bearing;
 
 }
 
-
 /* =========================================================
-   角度を -180 ～ +180 に変換
+   角度を -180～180
 ========================================================= */
 
 function normalizeAngle(angle){
@@ -480,7 +505,6 @@ return (
 ) - 180;
 
 }
-
 
 /* =========================================================
    現在位置
@@ -492,25 +516,71 @@ let nearestSpot = null;
 
 let nearestDistance = Infinity;
 
-
 /* =========================================================
-   スマホの方角
+   コンパス
 ========================================================= */
 
 let currentHeading = null;
 
+/* =========================================================
+   コンパス表示切替
+========================================================= */
+
+function updateCompassVisibility(){
+
+if(compassVisible){
+
+arrow.setAttribute(
+"visible",
+true
+);
+
+arrowInfo.style.display =
+"block";
+
+compassToggle.textContent =
+"🧭 コンパスを非表示";
+
+}else{
+
+arrow.setAttribute(
+"visible",
+false
+);
+
+arrowInfo.style.display =
+"none";
+
+compassToggle.textContent =
+"🧭 コンパスを表示";
+
+}
+
+}
 
 /* =========================================================
-   iPhoneコンパス許可
+   コンパス非表示ボタン
+========================================================= */
+
+compassToggle.addEventListener(
+"click",
+()=>{
+
+compassVisible =
+!compassVisible;
+
+updateCompassVisibility();
+
+}
+);
+
+/* =========================================================
+   iPhone Safari コンパス許可
 ========================================================= */
 
 async function enableCompass(){
 
 try{
-
-/*
- iPhone Safari
-*/
 
 if(
 typeof DeviceOrientationEvent !== "undefined" &&
@@ -531,35 +601,20 @@ return;
 
 }
 
-
-/*
- センサー開始
-*/
-
 window.addEventListener(
 "deviceorientation",
 handleOrientation,
 true
 );
 
-
-/*
- Android等でabsoluteイベントが使える場合
-*/
-
-window.addEventListener(
-"deviceorientationabsolute",
-handleOrientation,
-true
-);
-
-
 compassButton.style.display =
 "none";
 
+compassToggle.style.display =
+"block";
+
 arrowInfo.textContent =
 "🧭 コンパス有効";
-
 
 }catch(error){
 
@@ -572,27 +627,20 @@ arrowInfo.textContent =
 
 }
 
-
 compassButton.addEventListener(
 "click",
 enableCompass
 );
 
-
 /* =========================================================
-   デバイスの向きを取得
+   スマホの向きを取得
 ========================================================= */
 
 function handleOrientation(event){
 
 let heading = null;
 
-
-/*
- =====================================================
- iPhone Safari
- =====================================================
-*/
+/* iPhone Safari */
 
 if(
 typeof event.webkitCompassHeading === "number" &&
@@ -604,14 +652,10 @@ event.webkitCompassHeading;
 
 }
 
-
-/*
- =====================================================
- Android / その他
- =====================================================
-*/
+/* Androidなど */
 
 else if(
+event.absolute === true &&
 typeof event.alpha === "number"
 ){
 
@@ -620,27 +664,16 @@ heading =
 
 }
 
-
-/*
- =====================================================
- 値を0～360に整理
- =====================================================
-*/
-
 if(heading !== null){
 
-heading =
-(heading + 360) % 360;
-
 currentHeading =
-heading;
+(heading + 360) % 360;
 
 updateArrow();
 
 }
 
 }
-
 
 /* =========================================================
    AR矢印更新
@@ -663,12 +696,20 @@ return;
 
 }
 
+/* コンパスを非表示にしている場合 */
 
-/*
- =====================================================
- 目的地の方角
- =====================================================
-*/
+if(!compassVisible){
+
+arrow.setAttribute(
+"visible",
+false
+);
+
+return;
+
+}
+
+/* 目的地の方角 */
 
 const targetBearing =
 bearingDegrees(
@@ -678,17 +719,7 @@ nearestSpot.lat,
 nearestSpot.lng
 );
 
-
-/*
- =====================================================
- スマホ正面から見た目的地の角度
- =====================================================
-
-  0   = 正面
- +90  = 右
- -90  = 左
- ±180 = 真後ろ
-*/
+/* スマホ正面から見た角度 */
 
 const difference =
 normalizeAngle(
@@ -696,54 +727,27 @@ targetBearing -
 currentHeading
 );
 
-
-/*
- =====================================================
- 矢印を画面上で回転
- =====================================================
-
- カメラの子要素なので、
-
- Z軸回転
- ↓
- スマホ画面内での回転
-
- になる。
-
- スマホを地面に対して垂直に持っていても、
- 画面上の左右方向を正しく表現できる。
-*/
+/* =====================================================
+   前のバージョンと同じZ軸回転
+===================================================== */
 
 arrow.setAttribute(
 "rotation",
 `0 0 ${-difference}`
 );
 
-
-/*
- =====================================================
- 矢印を表示
- =====================================================
-*/
+/* 表示 */
 
 arrow.setAttribute(
 "visible",
 true
 );
 
-
-/*
- =====================================================
- 方向表示
- =====================================================
-*/
+/* =====================================================
+   方向文字
+===================================================== */
 
 let directionText;
-
-
-/*
- 正面
-*/
 
 if(
 Math.abs(difference) < 15
@@ -754,14 +758,9 @@ directionText =
 
 }
 
-
-/*
- 右
-*/
-
 else if(
-difference >= 15 &&
-difference < 165
+difference > 0 &&
+difference < 180
 ){
 
 directionText =
@@ -769,25 +768,15 @@ directionText =
 
 }
 
-
-/*
- 左
-*/
-
 else if(
-difference <= -15 &&
-difference > -165
+difference < 0 &&
+difference > -180
 ){
 
 directionText =
 "⬅ 左";
 
 }
-
-
-/*
- 後ろ
-*/
 
 else{
 
@@ -796,19 +785,15 @@ directionText =
 
 }
 
-
-/*
- =====================================================
- 画面表示
- =====================================================
-*/
+/* =====================================================
+   画面表示
+===================================================== */
 
 arrowInfo.textContent =
 `${directionText}\n` +
 `${nearestSpot.name}　${nearestDistance.toFixed(1)}m`;
 
 }
-
 
 /* =========================================================
    最寄りモデルだけ表示
@@ -824,7 +809,6 @@ nearestDistance <= ACTIVE_RADIUS
 ? nearest.id
 : null;
 
-
 spots.forEach(spot => {
 
 const entity =
@@ -839,14 +823,12 @@ spot.id === activeId
 
 });
 
-
 return activeId;
 
 }
 
-
 /* =========================================================
-   GPS
+   GPS取得
 ========================================================= */
 
 navigator.geolocation.watchPosition(
@@ -862,29 +844,18 @@ p.coords.longitude;
 const accuracy =
 p.coords.accuracy;
 
-
-/*
- 現在位置保存
-*/
+/* 現在位置 */
 
 currentPosition = {
-
 lat:lat,
 lng:lng
-
 };
 
-
-/*
- =====================================================
- 最寄りスポット検索
- =====================================================
-*/
+/* 最寄りスポット検索 */
 
 nearestSpot = null;
 
 nearestDistance = Infinity;
-
 
 spots.forEach(spot => {
 
@@ -895,7 +866,6 @@ lng,
 spot.lat,
 spot.lng
 );
-
 
 if(
 d < nearestDistance
@@ -909,12 +879,7 @@ nearestSpot = spot;
 
 });
 
-
-/*
- =====================================================
- 最寄りモデルだけ表示
- =====================================================
-*/
+/* 最寄りモデル表示 */
 
 const activeId =
 showOnlyNearestModel(
@@ -922,18 +887,12 @@ nearestSpot,
 nearestDistance
 );
 
-
 const active =
 activeId
 ? `${nearestSpot.name}:${states.get(activeId) || "準備中"}`
 : "なし";
 
-
-/*
- =====================================================
- 目的地方位
- =====================================================
-*/
+/* 目的地方位 */
 
 const targetBearing =
 nearestSpot
@@ -945,12 +904,7 @@ nearestSpot.lng
 )
 : null;
 
-
-/*
- =====================================================
- デバッグ
- =====================================================
-*/
+/* デバッグ */
 
 debug.textContent =
 `現在位置
@@ -982,10 +936,7 @@ targetBearing !== null
 300m以内のモデル
 ${active}`;
 
-
-/*
- 矢印更新
-*/
+/* 矢印更新 */
 
 updateArrow();
 
