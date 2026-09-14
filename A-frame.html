@@ -88,18 +88,22 @@ html,body{
 
 <body>
 
-<div id="debug">GPS取得待機中...</div>
+<div id="debug">
+GPS取得待機中...
+</div>
 
 <button id="compassButton">
-  🧭 コンパスを有効にする
+🧭 コンパスを有効にする
 </button>
 
 <div id="arrowInfo">
-  方向を取得中...
+方向を取得中...
 </div>
 
 <div id="back">
-  <button onclick="location.href='index.html'">← ホーム</button>
+<button onclick="location.href='index.html'">
+← ホーム
+</button>
 </div>
 
 <a-scene
@@ -108,118 +112,121 @@ vr-mode-ui="enabled:false"
 embedded
 arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:false;">
 
-  <!-- ========================= -->
-
-  <!-- カメラ -->
-
-  <!-- ========================= -->
+<!-- =====================================================
+     カメラ
+===================================================== -->
 
 <a-camera
- id="camera"
- gps-camera
- rotation-reader
- camera="far:10000;near:0.1">
+id="camera"
+gps-camera
+rotation-reader
+camera="far:10000;near:0.1">
 
-```
-<!-- ========================= -->
-<!-- カメラ前に浮かぶ方向矢印 -->
-<!-- ========================= -->
+<!-- =====================================================
+     カメラの目の前に浮かぶ方向矢印
+     
+     スマホを地面に対して垂直に持った場合、
+     画面の左右方向はカメラのX-Y平面になる。
+     
+     矢印はカメラの子要素なので、
+     常に画面の前に表示される。
+===================================================== -->
 
 <a-entity
-  id="directionArrow"
-  position="0 0 -3"
-  visible="false">
+id="directionArrow"
+position="0 0 -3"
+rotation="0 0 0"
+visible="false">
 
-  <!-- 矢印の棒 -->
-  <a-cylinder
-    position="0 -0.35 0"
-    radius="0.07"
-    height="0.7"
-    rotation="0 0 0">
-  </a-cylinder>
+<!-- 矢印本体 -->
 
-  <!-- 矢印の先 -->
-  <a-cone
-    position="0 0.25 0"
-    radius-bottom="0.25"
-    radius-top="0"
-    height="0.5"
-    rotation="0 0 0">
-  </a-cone>
+<a-cylinder
+id="arrowBody"
+position="0 0 0"
+radius="0.07"
+height="0.9"
+rotation="0 0 90"> </a-cylinder>
+
+<!-- 矢印の先 -->
+
+<a-cone
+id="arrowHead"
+position="0.48 0 0"
+radius-bottom="0.25"
+radius-top="0"
+height="0.5"
+rotation="0 0 -90"> </a-cone>
 
 </a-entity>
-```
 
-  </a-camera>
+</a-camera>
 
-  <!-- ========================= -->
-
-  <!-- 観光ARモデル -->
-
-  <!-- ========================= -->
+<!-- =====================================================
+     観光ARモデル
+===================================================== -->
 
 <a-entity
- id="model-castle"
- gps-entity-place="latitude:37.954824724542696;longitude:139.326001834219947;"
- gltf-model="shibata_jyo.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-castle"
+gps-entity-place="latitude:37.954824724542696;longitude:139.326001834219947;"
+gltf-model="shibata_jyo.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-zousyunkaku"
- gps-entity-place="latitude:37.94389807273562;longitude:139.3317142467578;"
- gltf-model="Zousyunkaku.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-zousyunkaku"
+gps-entity-place="latitude:37.94389807273562;longitude:139.3317142467578;"
+gltf-model="Zousyunkaku.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-sl"
- gps-entity-place="latitude:37.94367248807764;longitude:139.3323475293261;"
- gltf-model="SL.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-sl"
+gps-entity-place="latitude:37.94367248807764;longitude:139.3323475293261;"
+gltf-model="SL.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-oumon"
- gps-entity-place="latitude:37.94436989072327;longitude:139.33066511399528;"
- gltf-model="Oumon.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-oumon"
+gps-entity-place="latitude:37.94436989072327;longitude:139.33066511399528;"
+gltf-model="Oumon.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-station"
- gps-entity-place="latitude:37.94413;longitude:139.33510;"
- gltf-model="shibata_station.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-station"
+gps-entity-place="latitude:37.94413;longitude:139.33510;"
+gltf-model="shibata_station.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-menchi"
- gps-entity-place="latitude:37.93682;longitude:139.34488;"
- gltf-model="Menchikatsu.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-menchi"
+gps-entity-place="latitude:37.93682;longitude:139.34488;"
+gltf-model="Menchikatsu.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 <a-entity
- id="model-hellotore"
- gps-entity-place="latitude:37.95588068;longitude:139.3382848;"
- gltf-model="hellotore_kun.glb"
- scale="1 1 1"
- position="0 2 0"
- rotation="0 180 0"
- visible="false"> </a-entity>
+id="model-hellotore"
+gps-entity-place="latitude:37.95588068;longitude:139.3382848;"
+gltf-model="hellotore_kun.glb"
+scale="1 1 1"
+position="0 2 0"
+rotation="0 180 0"
+visible="false"> </a-entity>
 
 </a-scene>
 
@@ -228,14 +235,27 @@ arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:fal
 <script src="collection-tracker.js"></script>
 
 <script>
+
 /* =========================================================
-   基本設定
+   DOM
 ========================================================= */
 
-const debug = document.getElementById("debug");
-const arrow = document.getElementById("directionArrow");
-const arrowInfo = document.getElementById("arrowInfo");
-const compassButton = document.getElementById("compassButton");
+const debug =
+document.getElementById("debug");
+
+const arrow =
+document.getElementById("directionArrow");
+
+const arrowInfo =
+document.getElementById("arrowInfo");
+
+const compassButton =
+document.getElementById("compassButton");
+
+
+/* =========================================================
+   設定
+========================================================= */
 
 const ACTIVE_RADIUS = 300;
 
@@ -246,68 +266,68 @@ const ACTIVE_RADIUS = 300;
 
 const spots = [
 
-  {
-    id:"castle",
-    name:"新発田城",
-    lat:37.954824724542696,
-    lng:139.326001834219947,
-    model:"shibata_jyo.glb",
-    scale:"1 1 1"
-  },
+{
+id:"castle",
+name:"新発田城",
+lat:37.954824724542696,
+lng:139.326001834219947,
+model:"shibata_jyo.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"zousyunkaku",
-    name:"蔵春閣",
-    lat:37.94389807273562,
-    lng:139.3317142467578,
-    model:"Zousyunkaku.glb",
-    scale:"1 1 1"
-  },
+{
+id:"zousyunkaku",
+name:"蔵春閣",
+lat:37.94389807273562,
+lng:139.3317142467578,
+model:"Zousyunkaku.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"sl",
-    name:"東公園のSL",
-    lat:37.94367248807764,
-    lng:139.3323475293261,
-    model:"SL.glb",
-    scale:"1 1 1"
-  },
+{
+id:"sl",
+name:"東公園のSL",
+lat:37.94367248807764,
+lng:139.3323475293261,
+model:"SL.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"oumon",
-    name:"王紋酒造",
-    lat:37.94436989072327,
-    lng:139.33066511399528,
-    model:"Oumon.glb",
-    scale:"1 1 1"
-  },
+{
+id:"oumon",
+name:"王紋酒造",
+lat:37.94436989072327,
+lng:139.33066511399528,
+model:"Oumon.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"station",
-    name:"新発田駅",
-    lat:37.94413,
-    lng:139.33510,
-    model:"shibata_station.glb",
-    scale:"1 1 1"
-  },
+{
+id:"station",
+name:"新発田駅",
+lat:37.94413,
+lng:139.33510,
+model:"shibata_station.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"menchi",
-    name:"五十公野メンチカツや",
-    lat:37.93682,
-    lng:139.34488,
-    model:"Menchikatsu.glb",
-    scale:"1 1 1"
-  },
+{
+id:"menchi",
+name:"五十公野メンチカツや",
+lat:37.93682,
+lng:139.34488,
+model:"Menchikatsu.glb",
+scale:"1 1 1"
+},
 
-  {
-    id:"hellotore",
-    name:"新潟職業能力開発短期大学校",
-    lat:37.95588068,
-    lng:139.3382848,
-    model:"hellotore_kun.glb",
-    scale:"1 1 1"
-  }
+{
+id:"hellotore",
+name:"新潟職業能力開発短期大学校",
+lat:37.95588068,
+lng:139.3382848,
+model:"hellotore_kun.glb",
+scale:"1 1 1"
+}
 
 ];
 
@@ -320,25 +340,42 @@ const states = new Map();
 
 spots.forEach(spot => {
 
-  const entity =
-    document.getElementById(`model-${spot.id}`);
+const entity =
+document.getElementById(
+`model-${spot.id}`
+);
 
-  states.set(spot.id,"読み込み中");
+states.set(
+spot.id,
+"読み込み中"
+);
 
-  entity.addEventListener(
-    "model-loaded",
-    () => {
-      states.set(spot.id,"読込成功");
-    }
-  );
+entity.addEventListener(
+"model-loaded",
+() => {
 
-  entity.addEventListener(
-    "model-error",
-    e => {
-      states.set(spot.id,"読込失敗");
-      console.error(spot.name,e.detail);
-    }
-  );
+states.set(
+spot.id,
+"読込成功"
+);
+
+});
+
+entity.addEventListener(
+"model-error",
+e => {
+
+states.set(
+spot.id,
+"読込失敗"
+);
+
+console.error(
+spot.name,
+e.detail
+);
+
+});
 
 });
 
@@ -348,33 +385,39 @@ spots.forEach(spot => {
 ========================================================= */
 
 function rad(v){
-  return v * Math.PI / 180;
+
+return v * Math.PI / 180;
+
 }
 
 
 function distanceMeters(
-  lat1,
-  lng1,
-  lat2,
-  lng2
+lat1,
+lng1,
+lat2,
+lng2
 ){
 
-  const R = 6371000;
+const R = 6371000;
 
-  const dLat = rad(lat2-lat1);
-  const dLng = rad(lng2-lng1);
+const dLat =
+rad(lat2-lat1);
 
-  const a =
-    Math.sin(dLat/2)**2 +
-    Math.cos(rad(lat1)) *
-    Math.cos(rad(lat2)) *
-    Math.sin(dLng/2)**2;
+const dLng =
+rad(lng2-lng1);
 
-  return R * 2 *
-    Math.atan2(
-      Math.sqrt(a),
-      Math.sqrt(1-a)
-    );
+const a =
+Math.sin(dLat/2)**2 +
+Math.cos(rad(lat1)) *
+Math.cos(rad(lat2)) *
+Math.sin(dLng/2)**2;
+
+return R * 2 *
+Math.atan2(
+Math.sqrt(a),
+Math.sqrt(1-a)
+);
+
 }
 
 
@@ -383,164 +426,218 @@ function distanceMeters(
 ========================================================= */
 
 function bearingDegrees(
-  lat1,
-  lng1,
-  lat2,
-  lng2
+lat1,
+lng1,
+lat2,
+lng2
 ){
 
-  const y =
-    Math.sin(rad(lng2-lng1)) *
-    Math.cos(rad(lat2));
+const y =
+Math.sin(
+rad(lng2-lng1)
+) *
+Math.cos(
+rad(lat2)
+);
 
-  const x =
-    Math.cos(rad(lat1)) *
-    Math.sin(rad(lat2)) -
-    Math.sin(rad(lat1)) *
-    Math.cos(rad(lat2)) *
-    Math.cos(rad(lng2-lng1));
+const x =
+Math.cos(
+rad(lat1)
+) *
+Math.sin(
+rad(lat2)
+) -
+Math.sin(
+rad(lat1)
+) *
+Math.cos(
+rad(lat2)
+) *
+Math.cos(
+rad(lng2-lng1)
+);
 
-  let bearing =
-    Math.atan2(y,x) * 180 / Math.PI;
+let bearing =
+Math.atan2(y,x)
+* 180 / Math.PI;
 
-  bearing =
-    (bearing + 360) % 360;
+bearing =
+(bearing + 360) % 360;
 
-  return bearing;
+return bearing;
+
 }
 
 
 /* =========================================================
-   角度を -180～180 にする
+   角度を -180 ～ +180 に変換
 ========================================================= */
 
 function normalizeAngle(angle){
 
-  return (
-    (angle + 540) % 360
-  ) - 180;
+return (
+(angle + 540) % 360
+) - 180;
 
 }
 
 
 /* =========================================================
-   現在位置・最寄りスポット
+   現在位置
 ========================================================= */
 
 let currentPosition = null;
+
 let nearestSpot = null;
+
 let nearestDistance = Infinity;
 
 
 /* =========================================================
-   コンパス
+   スマホの方角
 ========================================================= */
 
 let currentHeading = null;
 
 
-/*
-   iPhone Safariでは
-   DeviceOrientationEvent.requestPermission()
-   が必要
-*/
+/* =========================================================
+   iPhoneコンパス許可
+========================================================= */
 
 async function enableCompass(){
 
-  try{
+try{
 
-    if(
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ){
+/*
+ iPhone Safari
+*/
 
-      const permission =
-        await DeviceOrientationEvent.requestPermission();
+if(
+typeof DeviceOrientationEvent !== "undefined" &&
+typeof DeviceOrientationEvent.requestPermission === "function"
+){
 
-      if(permission !== "granted"){
+const permission =
+await DeviceOrientationEvent.requestPermission();
 
-        arrowInfo.textContent =
-          "コンパスの許可が必要です";
+if(permission !== "granted"){
 
-        return;
+arrowInfo.textContent =
+"コンパスの許可が必要です";
 
-      }
+return;
 
-    }
+}
 
-    window.addEventListener(
-      "deviceorientation",
-      handleOrientation,
-      true
-    );
+}
 
-    compassButton.style.display = "none";
 
-    arrowInfo.textContent =
-      "コンパス有効";
+/*
+ センサー開始
+*/
 
-  }catch(error){
+window.addEventListener(
+"deviceorientation",
+handleOrientation,
+true
+);
 
-    console.error(error);
 
-    arrowInfo.textContent =
-      "コンパスを利用できません";
+/*
+ Android等でabsoluteイベントが使える場合
+*/
 
-  }
+window.addEventListener(
+"deviceorientationabsolute",
+handleOrientation,
+true
+);
+
+
+compassButton.style.display =
+"none";
+
+arrowInfo.textContent =
+"🧭 コンパス有効";
+
+
+}catch(error){
+
+console.error(error);
+
+arrowInfo.textContent =
+"コンパスを利用できません";
+
+}
 
 }
 
 
 compassButton.addEventListener(
-  "click",
-  enableCompass
+"click",
+enableCompass
 );
 
 
 /* =========================================================
-   スマホの向きを取得
+   デバイスの向きを取得
 ========================================================= */
 
 function handleOrientation(event){
 
-  let heading = null;
+let heading = null;
 
 
-  /*
-     iPhone Safari
-  */
+/*
+ =====================================================
+ iPhone Safari
+ =====================================================
+*/
 
-  if(
-    typeof event.webkitCompassHeading === "number" &&
-    event.webkitCompassHeading >= 0
-  ){
+if(
+typeof event.webkitCompassHeading === "number" &&
+event.webkitCompassHeading >= 0
+){
 
-    heading = event.webkitCompassHeading;
+heading =
+event.webkitCompassHeading;
 
-  }
-
-
-  /*
-     Androidなど
-  */
-
-  else if(
-    event.absolute === true &&
-    typeof event.alpha === "number"
-  ){
-
-    heading = 360 - event.alpha;
-
-  }
+}
 
 
-  if(heading !== null){
+/*
+ =====================================================
+ Android / その他
+ =====================================================
+*/
 
-    currentHeading = heading;
+else if(
+typeof event.alpha === "number"
+){
 
-    updateArrow();
+heading =
+360 - event.alpha;
 
-  }
+}
+
+
+/*
+ =====================================================
+ 値を0～360に整理
+ =====================================================
+*/
+
+if(heading !== null){
+
+heading =
+(heading + 360) % 360;
+
+currentHeading =
+heading;
+
+updateArrow();
+
+}
 
 }
 
@@ -551,95 +648,164 @@ function handleOrientation(event){
 
 function updateArrow(){
 
-  if(
-    !currentPosition ||
-    !nearestSpot ||
-    currentHeading === null
-  ){
+if(
+!currentPosition ||
+!nearestSpot ||
+currentHeading === null
+){
 
-    arrow.setAttribute(
-      "visible",
-      false
-    );
+arrow.setAttribute(
+"visible",
+false
+);
 
-    return;
+return;
 
-  }
-
-
-  const targetBearing =
-    bearingDegrees(
-      currentPosition.lat,
-      currentPosition.lng,
-      nearestSpot.lat,
-      nearestSpot.lng
-    );
+}
 
 
-  /*
-     目的地とスマホの向きの差
-  */
+/*
+ =====================================================
+ 目的地の方角
+ =====================================================
+*/
 
-  const difference =
-    normalizeAngle(
-      targetBearing - currentHeading
-    );
-
-
-  /*
-     A-Frameの矢印は最初は上向き。
-     Z回転で左右に向ける。
-  */
-
-  arrow.setAttribute(
-    "rotation",
-    `0 0 ${-difference}`
-  );
+const targetBearing =
+bearingDegrees(
+currentPosition.lat,
+currentPosition.lng,
+nearestSpot.lat,
+nearestSpot.lng
+);
 
 
-  arrow.setAttribute(
-    "visible",
-    true
-  );
+/*
+ =====================================================
+ スマホ正面から見た目的地の角度
+ =====================================================
+
+  0   = 正面
+ +90  = 右
+ -90  = 左
+ ±180 = 真後ろ
+*/
+
+const difference =
+normalizeAngle(
+targetBearing -
+currentHeading
+);
 
 
-  /*
-     表示テキスト
-  */
+/*
+ =====================================================
+ 矢印を画面上で回転
+ =====================================================
 
-  let directionText = "";
+ カメラの子要素なので、
 
+ Z軸回転
+ ↓
+ スマホ画面内での回転
 
-  if(
-    Math.abs(difference) < 15
-  ){
+ になる。
 
-    directionText = "⬆ 正面";
+ スマホを地面に対して垂直に持っていても、
+ 画面上の左右方向を正しく表現できる。
+*/
 
-  }
-
-  else if(difference > 0 && difference < 180){
-
-    directionText = "➡ 右";
-
-  }
-
-  else if(difference < 0 && difference > -180){
-
-    directionText = "⬅ 左";
-
-  }
-
-  else{
-
-    directionText = "⬇ 後ろ";
-
-  }
+arrow.setAttribute(
+"rotation",
+`0 0 ${-difference}`
+);
 
 
-  arrowInfo.textContent =
-    `${directionText}\n` +
-    `${nearestSpot.name} ${nearestDistance.toFixed(1)}m`;
+/*
+ =====================================================
+ 矢印を表示
+ =====================================================
+*/
+
+arrow.setAttribute(
+"visible",
+true
+);
+
+
+/*
+ =====================================================
+ 方向表示
+ =====================================================
+*/
+
+let directionText;
+
+
+/*
+ 正面
+*/
+
+if(
+Math.abs(difference) < 15
+){
+
+directionText =
+"⬆ 正面";
+
+}
+
+
+/*
+ 右
+*/
+
+else if(
+difference >= 15 &&
+difference < 165
+){
+
+directionText =
+"➡ 右";
+
+}
+
+
+/*
+ 左
+*/
+
+else if(
+difference <= -15 &&
+difference > -165
+){
+
+directionText =
+"⬅ 左";
+
+}
+
+
+/*
+ 後ろ
+*/
+
+else{
+
+directionText =
+"⬇ 後ろ";
+
+}
+
+
+/*
+ =====================================================
+ 画面表示
+ =====================================================
+*/
+
+arrowInfo.textContent =
+`${directionText}\n` +
+`${nearestSpot.name}　${nearestDistance.toFixed(1)}m`;
 
 }
 
@@ -649,107 +815,144 @@ function updateArrow(){
 ========================================================= */
 
 function showOnlyNearestModel(
-  nearest,
-  nearestDistance
+nearest,
+nearestDistance
 ){
 
-  const activeId =
-    nearestDistance <= ACTIVE_RADIUS
-      ? nearest.id
-      : null;
+const activeId =
+nearestDistance <= ACTIVE_RADIUS
+? nearest.id
+: null;
 
 
-  spots.forEach(spot => {
+spots.forEach(spot => {
 
-    const entity =
-      document.getElementById(
-        `model-${spot.id}`
-      );
+const entity =
+document.getElementById(
+`model-${spot.id}`
+);
 
-    entity.setAttribute(
-      "visible",
-      spot.id === activeId
-    );
+entity.setAttribute(
+"visible",
+spot.id === activeId
+);
 
-  });
+});
 
 
-  return activeId;
+return activeId;
 
 }
 
 
 /* =========================================================
-   GPS取得
+   GPS
 ========================================================= */
 
 navigator.geolocation.watchPosition(
 
-  p => {
+p => {
 
-    const lat =
-      p.coords.latitude;
+const lat =
+p.coords.latitude;
 
-    const lng =
-      p.coords.longitude;
+const lng =
+p.coords.longitude;
 
-    const accuracy =
-      p.coords.accuracy;
-
-
-    currentPosition = {
-      lat:lat,
-      lng:lng
-    };
+const accuracy =
+p.coords.accuracy;
 
 
-    nearestSpot = null;
-    nearestDistance = Infinity;
+/*
+ 現在位置保存
+*/
+
+currentPosition = {
+
+lat:lat,
+lng:lng
+
+};
 
 
-    spots.forEach(spot => {
+/*
+ =====================================================
+ 最寄りスポット検索
+ =====================================================
+*/
 
-      const d =
-        distanceMeters(
-          lat,
-          lng,
-          spot.lat,
-          spot.lng
-        );
+nearestSpot = null;
 
-
-      if(d < nearestDistance){
-
-        nearestDistance = d;
-        nearestSpot = spot;
-
-      }
-
-    });
+nearestDistance = Infinity;
 
 
-    /*
-       最寄りモデル表示
-    */
+spots.forEach(spot => {
 
-    const activeId =
-      showOnlyNearestModel(
-        nearestSpot,
-        nearestDistance
-      );
-
-
-    const active =
-      activeId
-        ? `${nearestSpot.name}:${states.get(activeId) || "準備中"}`
-        : "なし";
+const d =
+distanceMeters(
+lat,
+lng,
+spot.lat,
+spot.lng
+);
 
 
-    /*
-       デバッグ表示
-    */
+if(
+d < nearestDistance
+){
 
-    debug.textContent =
+nearestDistance = d;
+
+nearestSpot = spot;
+
+}
+
+});
+
+
+/*
+ =====================================================
+ 最寄りモデルだけ表示
+ =====================================================
+*/
+
+const activeId =
+showOnlyNearestModel(
+nearestSpot,
+nearestDistance
+);
+
+
+const active =
+activeId
+? `${nearestSpot.name}:${states.get(activeId) || "準備中"}`
+: "なし";
+
+
+/*
+ =====================================================
+ 目的地方位
+ =====================================================
+*/
+
+const targetBearing =
+nearestSpot
+? bearingDegrees(
+lat,
+lng,
+nearestSpot.lat,
+nearestSpot.lng
+)
+: null;
+
+
+/*
+ =====================================================
+ デバッグ
+ =====================================================
+*/
+
+debug.textContent =
 `現在位置
 緯度:${lat.toFixed(8)}
 経度:${lng.toFixed(8)}
@@ -757,48 +960,53 @@ GPS精度:${accuracy.toFixed(1)} m
 
 最寄り:${nearestSpot ? nearestSpot.name : "-"}
 距離:${nearestDistance < Infinity ? nearestDistance.toFixed(1) : "-"} m
-設置座標:${nearestSpot ? `${nearestSpot.lat}, ${nearestSpot.lng}` : "-"}
 
-スマホ方位:${currentHeading !== null ? currentHeading.toFixed(1) + "°" : "取得待ち"}
+設置座標:${
+nearestSpot
+? `${nearestSpot.lat}, ${nearestSpot.lng}`
+: "-"
+}
+
+スマホ方位:${
+currentHeading !== null
+? currentHeading.toFixed(1) + "°"
+: "取得待ち"
+}
 
 目的地方位:${
-  nearestSpot
-    ? bearingDegrees(
-        lat,
-        lng,
-        nearestSpot.lat,
-        nearestSpot.lng
-      ).toFixed(1) + "°"
-    : "-"
+targetBearing !== null
+? targetBearing.toFixed(1) + "°"
+: "-"
 }
 
 300m以内のモデル
 ${active}`;
 
 
-    /*
-       矢印更新
-    */
+/*
+ 矢印更新
+*/
 
-    updateArrow();
+updateArrow();
 
-  },
+},
 
-  e => {
+e => {
 
-    debug.textContent =
+debug.textContent =
 `位置情報エラー
 ${e.message}`;
 
-  },
+},
 
-  {
-    enableHighAccuracy:true,
-    maximumAge:0,
-    timeout:15000
-  }
+{
+enableHighAccuracy:true,
+maximumAge:0,
+timeout:15000
+}
 
 );
+
 </script>
 
 </body>
