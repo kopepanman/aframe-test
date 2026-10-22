@@ -1,95 +1,150 @@
+```html
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>しばコレ ARラボ</title>
-
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
 <style>
 *{box-sizing:border-box}
+:root{
+  --bg:#07111f;
+  --panel:rgba(9,20,38,.94);
+  --line:#263e5d;
+  --blue:#65b5ff;
+  --text:#edf6ff;
+  --sub:#91a9c6;
+}
 body{
-  margin:0;background:#090f1b;color:white;
-  font-family:system-ui,"Noto Sans JP",sans-serif
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:system-ui,"Noto Sans JP",sans-serif;
 }
 #camera{
   position:fixed;inset:0;width:100%;height:100%;
-  object-fit:cover;z-index:0;background:#101b2a
+  object-fit:cover;z-index:0;background:#101b2a;
 }
 #scene{
   position:fixed!important;inset:0;
   width:100%!important;height:100%!important;
-  z-index:1;background:transparent!important
+  z-index:1;background:transparent!important;
 }
 a-scene canvas{background:transparent!important}
+
 #top{
   position:fixed;top:0;left:0;right:0;z-index:10;
-  padding:calc(12px + env(safe-area-inset-top)) 16px 14px;
-  background:linear-gradient(#091527ed,#09152700);
-  pointer-events:none
+  padding:calc(12px + env(safe-area-inset-top)) 15px 25px;
+  background:linear-gradient(#07111ff0,transparent);
+  pointer-events:none;
 }
-h1{font-size:19px;margin:0}
-#top small{opacity:.7}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-icon{
+  width:34px;height:34px;border:1px solid #65b5ff88;
+  border-radius:11px;display:grid;place-items:center;
+  color:var(--blue);font-size:19px;
+  background:#102743cc;
+}
+h1{font-size:17px;letter-spacing:.04em;margin:0}
+#top small{display:block;color:var(--sub);font-size:10px;margin-top:3px}
+
+#reticle{
+  position:fixed;z-index:3;left:50%;top:42%;
+  transform:translate(-50%,-50%);
+  color:#ffffff9c;font-size:19px;
+  text-shadow:0 1px 4px #000;pointer-events:none;
+}
+
 #panel{
-  position:fixed;bottom:0;left:0;right:0;z-index:11;
-  background:#0c172cef;backdrop-filter:blur(18px);
-  border-radius:24px 24px 0 0;border:1px solid #ffffff24;
-  padding:18px 16px calc(18px + env(safe-area-inset-bottom));
-  max-height:67vh;overflow:auto;transition:transform .25s
+  position:fixed;z-index:11;bottom:0;left:0;right:0;
+  padding:0 12px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,#050b15aa 14px);
+  transition:transform .25s;
 }
+.panel-inner{
+  max-width:560px;margin:auto;
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid #ffffff20;border-radius:20px;
+  padding:12px;
+  box-shadow:0 -8px 35px #0003;
+  max-height:60vh;overflow:auto;
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin-bottom:10px;
+}
+.panel-title{font-size:13px;font-weight:800}
+.panel-caption{font-size:10px;color:var(--sub);margin-top:3px}
 .status{
-  display:inline-block;border-radius:99px;
-  background:#1b3458;padding:5px 10px;
-  font-size:12px;margin-bottom:10px
+  font-size:10px;color:#9ed8ff;
+  border:1px solid #365777;background:#142940;
+  border-radius:99px;padding:5px 8px;white-space:nowrap;
 }
 label{
-  display:block;font-size:13px;font-weight:bold;
-  margin:12px 0 6px
+  display:block;font-size:11px;color:#b5c8df;
+  margin:11px 0 6px;font-weight:700;
 }
-select,button,input{font:inherit}
+select,input,button{font:inherit}
 select{
-  width:100%;background:#1b2a43;
-  border:1px solid #486184;color:white;
-  border-radius:11px;padding:12px
+  width:100%;padding:10px 11px;
+  background:#12243b;color:var(--text);
+  border:1px solid var(--line);border-radius:10px;
+  font-size:13px;outline:none;
 }
-button{
-  border:0;border-radius:12px;padding:12px 14px;
-  background:#4d9eff;color:#071120;
-  font-weight:750;cursor:pointer
+button{cursor:pointer;border:0}
+.primary{
+  color:#061323;background:var(--blue);
+  font-weight:800;border-radius:10px;padding:10px 12px;
 }
-button.secondary{background:#233955;color:#fff}
-input[type=range]{width:100%;accent-color:#64abff}
-.scale{
-  display:flex;align-items:center;
-  justify-content:space-between;gap:12px
+.secondary{
+  color:var(--text);background:#172b43;
+  border:1px solid #304a67;border-radius:10px;
+  padding:9px 11px;font-size:12px;
 }
-.scale span{min-width:65px;text-align:right;font-weight:bold}
-.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.buttons button{flex:1}
-input[type=file]{width:100%;font-size:13px}
+button:active{transform:scale(.98)}
+.file-button{
+  display:block;width:100%;text-align:center;
+  color:#dcecff;background:#12243b;
+  border:1px dashed #486586;border-radius:10px;
+  padding:9px;font-size:12px;
+}
+#file{display:none}
+.adjust{
+  display:grid;grid-template-columns:36px 1fr 36px;
+  align-items:center;gap:8px;
+}
+.step{
+  width:36px;height:36px;border-radius:10px;
+  background:#172d46;border:1px solid #304b69;
+  color:#d8eaff;font-size:18px;
+}
+.value{text-align:center;font-size:12px;font-weight:800;min-width:60px}
+.value small{display:block;color:var(--sub);font-size:9px;font-weight:500}
+input[type=range]{
+  width:100%;display:block;accent-color:var(--blue);
+  margin:0;height:25px;
+}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.controls button{width:100%}
 #message{
-  font-size:12px;color:#bad5f7;
-  min-height:17px;margin-top:8px;line-height:1.6;
-  overflow-wrap:anywhere
+  color:var(--sub);font-size:10px;line-height:1.5;
+  margin-top:10px;overflow-wrap:anywhere;min-height:15px;
 }
-#reticle{
-  position:fixed;z-index:3;left:50%;top:41%;
-  transform:translate(-50%,-50%);
-  font-size:20px;color:#fff8;
-  text-shadow:0 1px 3px #000;pointer-events:none
+#collapse{
+  display:block;margin:0 auto 6px;
+  border:1px solid #ffffff24;background:#0b1728eF;
+  color:#dcecff;border-radius:99px;padding:7px 16px;
+  font-size:11px;
 }
-.off #panel{transform:translateY(calc(100% - 56px))}
-.off #panel:before{
-  content:'設定を開く ▲';display:block;
-  text-align:center;margin:-9px 0 18px;font-size:14px
-}
+#panel.collapsed .panel-inner{display:none}
+#panel.collapsed{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+#panel.collapsed #collapse{margin-bottom:0}
+
 @media(min-width:750px){
-  #panel{
-    left:auto;width:370px;max-height:90vh;
-    border-radius:24px;bottom:20px;right:20px
-  }
-  #top{right:400px}
+  #top{right:410px}
+  #panel{left:auto;right:18px;bottom:18px;width:370px;padding:0}
+  .panel-inner{max-height:85vh}
+  #collapse{margin-bottom:7px}
 }
 </style>
 </head>
@@ -113,7 +168,6 @@ input[type=file]{width:100%;font-size:13px}
 
     <a-entity id="anchor" position="0 0 -3">
 
-      <!-- サンプルモデル -->
       <a-entity id="sample" visible="true">
         <a-box
           width=".7" height=".7" depth=".7"
@@ -130,7 +184,6 @@ input[type=file]{width:100%;font-size:13px}
         </a-text>
       </a-entity>
 
-      <!-- GLBモデル -->
       <a-entity id="model" visible="false"></a-entity>
 
     </a-entity>
@@ -138,67 +191,88 @@ input[type=file]{width:100%;font-size:13px}
 </a-scene>
 
 <div id="top">
-  <h1>しばコレ ARラボ</h1>
-  <small>独立した3Dモデル表示テスト</small>
+  <div class="brand">
+    <div class="brand-icon">⌖</div>
+    <div>
+      <h1>しばコレ ARラボ</h1>
+      <small>SHIBATA · AR MODEL VIEWER</small>
+    </div>
+  </div>
 </div>
 
 <div id="reticle">＋</div>
 
 <div id="panel">
+  <button id="collapse">設定を閉じる　⌄</button>
 
-  <div id="status" class="status">● カメラ未起動</div>
+  <div class="panel-inner">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">MODEL CONTROL</div>
+        <div class="panel-caption">表示モデルと位置を調整</div>
+      </div>
+      <div id="status" class="status">● カメラ未起動</div>
+    </div>
 
-  <div class="buttons" style="margin-top:0">
-    <button id="start">📷 カメラを起動</button>
-    <button class="secondary" id="toggle">設定を閉じる</button>
+    <button id="start" class="primary" style="width:100%">
+      📷 カメラを起動
+    </button>
+
+    <label for="spot">表示モデル</label>
+    <select id="spot">
+      <option value="sample">サンプル（青い立方体）</option>
+      <option value="Zousyunkaku.glb">蔵春閣</option>
+      <option value="hellotore_kun.glb">ハロトレくん</option>
+      <option value="shibata_station.glb">新発田駅</option>
+      <option value="shibata_suwa_shrine_gate.glb">諏訪神社の鳥居</option>
+      <option value="shibatacastle.glb">新発田城</option>
+    </select>
+
+    <label>自分の3Dモデルを読み込む</label>
+    <label class="file-button" for="file">＋ GLB / GLTF ファイルを選択</label>
+    <input type="file" id="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
+
+    <label>距離</label>
+    <div class="adjust">
+      <button class="step" data-target="distance" data-delta="-0.5">−</button>
+      <div>
+        <input id="distance" type="range" min="1" max="10" value="3" step=".5">
+        <div class="value"><span id="distanceValue">3.0 m</span></div>
+      </div>
+      <button class="step" data-target="distance" data-delta="0.5">＋</button>
+    </div>
+
+    <label>モデルサイズ</label>
+    <div class="adjust">
+      <button class="step" data-target="size" data-delta="-0.05">−</button>
+      <div>
+        <input id="size" type="range" min=".02" max="1.5" value=".3" step=".01">
+        <div class="value"><span id="sizeValue">0.30 倍</span></div>
+      </div>
+      <button class="step" data-target="size" data-delta="0.05">＋</button>
+    </div>
+
+    <label>高さ</label>
+    <div class="adjust">
+      <button class="step" data-target="height" data-delta="-0.1">−</button>
+      <div>
+        <input id="height" type="range" min="-3" max="3" value="0" step=".1">
+        <div class="value"><span id="heightValue">0.0 m</span></div>
+      </div>
+      <button class="step" data-target="height" data-delta="0.1">＋</button>
+    </div>
+
+    <div class="controls">
+      <button id="reset" class="secondary">↺ 初期設定</button>
+      <button id="spin" class="secondary">⟳ 回転 ON</button>
+    </div>
+
+    <div id="message">サンプルモデルを表示中です。</div>
   </div>
-
-  <label for="spot">表示モデル</label>
-  <select id="spot">
-    <option value="sample">サンプル（青い立方体）</option>
-    <option value="Zousyunkaku.glb">蔵春閣</option>
-    <option value="hellotore_kun.glb">ハロトレくん</option>
-    <option value="shibata_station.glb">新発田駅</option>
-    <option value="shibata_suwa_shrine_gate.glb">諏訪神社の鳥居</option>
-    <option value="shibatacastle.glb">新発田城</option>
-  </select>
-
-  <label for="file">自分のGLB / GLTFファイルを選択</label>
-  <input type="file" id="file"
-    accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
-
-  <label for="distance">目の前までの距離</label>
-  <div class="scale">
-    <input id="distance" type="range" min="1" max="10" value="3" step=".5">
-    <span id="distanceValue">3.0 m</span>
-  </div>
-
-  <label for="size">モデルの拡大率</label>
-  <div class="scale">
-    <input id="size" type="range" min=".05" max="3" value="1" step=".05">
-    <span id="sizeValue">1.00 倍</span>
-  </div>
-
-  <label for="height">高さ</label>
-  <div class="scale">
-    <input id="height" type="range" min="-3" max="3" value="0" step=".1">
-    <span id="heightValue">0.0 m</span>
-  </div>
-
-  <div class="buttons">
-    <button id="reset" class="secondary">位置・サイズ初期化</button>
-    <button id="spin" class="secondary">回転 ON/OFF</button>
-  </div>
-
-  <div id="message">
-    サンプルモデルを表示中です。
-  </div>
-
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
-
 const anchor = $('anchor');
 const model = $('model');
 const sample = $('sample');
@@ -206,21 +280,20 @@ const sample = $('sample');
 let fileUrl = null;
 let stream = null;
 let spin = false;
-let loadNumber = 0;
+let activeTarget = sample;
+let currentLoad = 0;
 
-/* メッセージ */
 function message(text){
   $('message').textContent = text;
 }
 
-/* 距離・高さ・サイズの変更 */
+/* 位置と大きさ */
 function placement(){
   const d = Number($('distance').value);
   const h = Number($('height').value);
   const s = Number($('size').value);
 
   anchor.setAttribute('position', `0 ${h} ${-d}`);
-
   model.setAttribute('scale', `${s} ${s} ${s}`);
   sample.setAttribute('scale', `${s} ${s} ${s}`);
 
@@ -233,61 +306,95 @@ function placement(){
   $(id).addEventListener('input', placement);
 });
 
-placement();
+/* ＋ / − ボタン */
+document.querySelectorAll('.step').forEach(button => {
+  button.addEventListener('click', () => {
+    const input = $(button.dataset.target);
+    const delta = Number(button.dataset.delta);
+    const min = Number(input.min);
+    const max = Number(input.max);
+    const step = Number(input.step);
 
-/* モデルの切り替え */
+    let value = Number(input.value) + delta;
+    value = Math.max(min, Math.min(max, value));
+    value = Math.round(value / step) * step;
+
+    input.value = value;
+    placement();
+  });
+});
+
+/* 回転 */
+function updateRotation(){
+  [sample, model].forEach(entity => {
+    entity.removeAttribute('animation__spin');
+  });
+
+  if(spin && activeTarget){
+    activeTarget.setAttribute(
+      'animation__spin',
+      'property:rotation;to:0 360 0;loop:true;dur:10000;easing:linear'
+    );
+  }
+
+  $('spin').textContent = spin ? '⟳ 回転 OFF' : '⟳ 回転 ON';
+}
+
+/* 表示モデル切り替え */
 function loadModel(src, label){
-  const currentLoad = ++loadNumber;
+  currentLoad++;
+  const thisLoad = currentLoad;
 
-  // 前のモデルをいったん非表示にする
   model.setAttribute('visible', false);
   sample.setAttribute('visible', false);
 
-  // 古いモデルの読み込み指定を解除
   model.removeAttribute('gltf-model');
+  activeTarget = model;
 
-  // サンプルが選択された場合
   if(!src){
     model.setAttribute('visible', false);
     sample.setAttribute('visible', true);
+    activeTarget = sample;
     $('file').value = '';
+    updateRotation();
     message('サンプルモデルを表示中');
     return;
   }
 
+  updateRotation();
   message('読み込み中：' + label);
 
-  // 同じ場所にあるGLBを直接読み込む
   model.setAttribute('gltf-model', src);
 }
 
-/* GLBの読み込み成功 */
+/* モデル読み込み完了 */
 model.addEventListener('model-loaded', () => {
   model.setAttribute('visible', true);
   sample.setAttribute('visible', false);
-  message('読み込み成功：選択したモデルを表示しています。');
+  activeTarget = model;
+  updateRotation();
+  message('読み込み成功：' + $('spot').selectedOptions[0].textContent);
 });
 
-/* GLBの読み込み失敗 */
+/* モデル読み込み失敗 */
 model.addEventListener('model-error', () => {
   model.setAttribute('visible', false);
   sample.setAttribute('visible', true);
-  message(
-    '読み込み失敗。ファイル名・大文字小文字・配置場所を確認してください。サンプルを表示しています。'
-  );
+  activeTarget = sample;
+  updateRotation();
+  message('読み込み失敗。ファイル名と配置場所を確認してください。サンプルを表示します。');
 });
 
-/* ドロップダウンの切り替え */
+/* セレクトボックス */
 $('spot').addEventListener('change', () => {
-  const value = $('spot').value;
-
-  // ファイル選択で作ったURLを解放
   if(fileUrl){
     URL.revokeObjectURL(fileUrl);
     fileUrl = null;
   }
 
   $('file').value = '';
+
+  const value = $('spot').value;
 
   if(value === 'sample'){
     loadModel(null, 'サンプル');
@@ -296,7 +403,7 @@ $('spot').addEventListener('change', () => {
   }
 });
 
-/* 自分のファイルを読み込む */
+/* ファイル選択 */
 $('file').addEventListener('change', event => {
   const file = event.target.files[0];
   if(!file) return;
@@ -306,19 +413,14 @@ $('file').addEventListener('change', event => {
   }
 
   fileUrl = URL.createObjectURL(file);
-
-  // セレクト表示もカスタムファイルに切り替える
-  $('spot').value = 'sample';
-
   loadModel(fileUrl, file.name);
 });
 
 /* カメラ起動 */
 $('start').addEventListener('click', async () => {
   try{
-    if(!navigator.mediaDevices ||
-       !navigator.mediaDevices.getUserMedia){
-      throw new Error('HTTPSでページを開いてください');
+    if(!navigator.mediaDevices?.getUserMedia){
+      throw new Error('HTTPSで開いてください');
     }
 
     if(stream){
@@ -326,8 +428,8 @@ $('start').addEventListener('click', async () => {
     }
 
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {facingMode: {ideal: 'environment'}},
-      audio: false
+      video:{facingMode:{ideal:'environment'}},
+      audio:false
     });
 
     $('camera').srcObject = stream;
@@ -335,62 +437,51 @@ $('start').addEventListener('click', async () => {
 
     $('status').textContent = '● カメラ起動中';
     $('status').style.background = '#194b42';
+    $('status').style.color = '#b5ffe6';
 
-    message('カメラを起動しました。モデル選択で表示を切り替えられます。');
-
+    message('カメラ起動完了。モデルを選んでください。');
   }catch(error){
-    message(
-      'カメラを起動できません：' + error.message +
-      '。HTTPSとカメラ権限を確認してください。'
-    );
+    message('カメラを起動できません：' + error.message + '。HTTPSと権限を確認してください。');
   }
 });
 
-/* 設定パネル */
-$('toggle').addEventListener('click', () => {
-  const off = document.body.classList.toggle('off');
-  $('toggle').textContent = off ? '設定を開く' : '設定を閉じる';
+/* パネル折りたたみ */
+$('collapse').addEventListener('click', () => {
+  const collapsed = $('panel').classList.toggle('collapsed');
+  $('collapse').textContent = collapsed ? '設定を開く　⌃' : '設定を閉じる　⌄';
 });
 
-/* 初期化 */
+/* 初期設定に戻す */
 $('reset').addEventListener('click', () => {
   $('distance').value = 3;
-  $('size').value = 1;
+  $('size').value = .3;
   $('height').value = 0;
   placement();
 });
 
-/* 回転 ON/OFF */
+/* 回転 ON / OFF */
 $('spin').addEventListener('click', () => {
   spin = !spin;
-
-  const target = model.getAttribute('visible') ? model : sample;
-
-  if(spin){
-    target.setAttribute('animation__spin',
-      'property:rotation;to:0 360 0;loop:true;dur:10000;easing:linear');
-    $('spin').textContent = '回転停止';
-  }else{
-    target.removeAttribute('animation__spin');
-    $('spin').textContent = '回転 ON/OFF';
-  }
+  updateRotation();
 });
 
-/* カメラ映像を透過キャンバスの背後に表示 */
+/* 背景透過 */
 $('scene').addEventListener('loaded', () => {
   const scene = $('scene');
-
   scene.renderer.setClearColor(0x000000, 0);
   scene.renderer.setClearAlpha(0);
   scene.object3D.background = null;
 });
 
-/* ページ終了時の後片付け */
+/* 起動時の初期表示 */
+placement();
+loadModel(null, 'サンプル');
+
+/* 終了処理 */
 window.addEventListener('pagehide', () => {
   if(stream){
     stream.getTracks().forEach(track => track.stop());
   }
-
   if(fileUrl){
     URL.revokeObjectURL(fileUrl);
   }
