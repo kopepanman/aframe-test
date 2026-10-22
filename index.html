@@ -1,9 +1,10 @@
+```html
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>しばコレ ARラボ - 表示テスト</title>
+<title>しばコレ ARラボ - カメラ表示テスト</title>
 
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
@@ -14,9 +15,12 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  background: #07111f;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
   color: #edf6ff;
   font-family: system-ui, "Noto Sans JP", sans-serif;
 }
@@ -27,27 +31,27 @@ body {
   left: 0;
   right: 0;
   z-index: 10;
-  padding: calc(12px + env(safe-area-inset-top)) 15px 20px;
-  background: linear-gradient(#07111ff0, transparent);
+  padding: calc(14px + env(safe-area-inset-top)) 15px 20px;
+  background: linear-gradient(#07111fee, transparent);
   pointer-events: none;
 }
 
 h1 {
-  font-size: 17px;
   margin: 0;
+  font-size: 17px;
 }
 
-#info {
+#panel {
   position: fixed;
+  z-index: 10;
   left: 12px;
   right: 12px;
   bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 10;
-  padding: 14px;
+  padding: 13px;
   border: 1px solid #ffffff30;
-  border-radius: 14px;
+  border-radius: 15px;
   background: rgba(9, 20, 38, .92);
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.7;
 }
 
@@ -58,7 +62,7 @@ h1 {
 
 button {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 9px;
   padding: 12px;
   border: 0;
   border-radius: 10px;
@@ -66,6 +70,23 @@ button {
   color: #061323;
   font: inherit;
   font-weight: bold;
+}
+
+a-scene {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  z-index: 1;
+}
+
+a-scene canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2 !important;
 }
 </style>
 </head>
@@ -76,27 +97,27 @@ button {
   <h1>⌖ しばコレ ARラボ</h1>
 </div>
 
-<div id="info">
-  <div id="status">カメラ起動前</div>
+<div id="panel">
+  <div id="status">カメラ起動中...</div>
   <div id="detail">
-    ボタンを押してカメラを起動してください。
+    カメラの使用を許可してください。映像の上に緑の立方体が表示されるか確認します。
   </div>
-  <button id="start">カメラを起動</button>
+  <button id="check">表示状態を確認</button>
 </div>
 
 <a-scene
   embedded
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
-  renderer="alpha: true; antialias: true; colorManagement: true"
-  loading-screen="enabled: false"
-  background="color: #000000">
+  arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
+  renderer="alpha: true; antialias: true; colorManagement: true; logarithmicDepthBuffer: true"
+  loading-screen="enabled: false">
 
   <a-entity id="cameraRig">
     <a-camera
       id="camera"
       position="0 0 0"
-      look-controls="enabled: true"
+      look-controls="enabled: false"
       wasd-controls="enabled: false">
     </a-camera>
 
@@ -116,65 +137,43 @@ button {
 <script>
 const statusText = document.getElementById('status');
 const detail = document.getElementById('detail');
-const startButton = document.getElementById('start');
+const scene = document.querySelector('a-scene');
 
-let cameraStream = null;
-
-startButton.addEventListener('click', async () => {
-  try {
-    statusText.textContent = 'カメラ起動中...';
-    detail.textContent = 'カメラの使用を許可してください。';
-
-    if (!navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia) {
-      throw new Error(
-        'カメラを利用できません。HTTPSでアクセスしてください。'
-      );
-    }
-
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: 'environment' }
-      },
-      audio: false
-    });
-
-    const scene = document.querySelector('a-scene');
-
-    statusText.textContent = 'カメラ許可成功';
-    detail.textContent =
-      '緑色の立方体が見えるか確認してください。';
-
-    /*
-      この版は描画確認専用です。
-      GPS配置や実世界の座標固定は行いません。
-    */
-
-    if (!scene.hasLoaded) {
-      await new Promise(resolve => {
-        scene.addEventListener('loaded', resolve, { once: true });
-      });
-    }
-
-    document.getElementById('testBox').setAttribute(
-      'visible',
-      'true'
-    );
-
-    startButton.textContent = 'カメラ起動済み';
-
-  } catch (error) {
-    statusText.textContent = '起動エラー';
-    detail.textContent = error.message;
-  }
+scene.addEventListener('loaded', () => {
+  statusText.textContent = '3Dシーン起動済み';
+  detail.textContent =
+    'カメラ映像と緑の立方体が表示されるか確認してください。';
 });
 
-window.addEventListener('pagehide', () => {
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(track => track.stop());
+scene.addEventListener('camera-init', () => {
+  statusText.textContent = 'カメラ初期化成功';
+});
+
+scene.addEventListener('camera-error', () => {
+  statusText.textContent = 'カメラエラー';
+  detail.textContent =
+    'ブラウザのカメラ権限、HTTPS接続、他のアプリによるカメラ使用を確認してください。';
+});
+
+document.getElementById('check').addEventListener('click', () => {
+  const box = document.getElementById('testBox');
+  const renderer = scene.renderer;
+
+  if (!renderer) {
+    statusText.textContent = '3D描画準備中';
+    detail.textContent =
+      '少し待ってからもう一度確認してください。';
+    return;
   }
+
+  box.setAttribute('visible', true);
+
+  statusText.textContent = '立方体を表示する設定です';
+  detail.textContent =
+    '緑の立方体が見え、背景にカメラ映像が表示されるか確認してください。';
 });
 </script>
 
 </body>
 </html>
+```
