@@ -20,6 +20,268 @@ html, body {
   overflow: hidden;
   font-family: sans-serif;
   color: white;
+  background: #172554;
+}
+
+model-viewer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #172554;
+  --poster-color: #172554;
+}
+
+#panel {
+  position: fixed;
+  z-index: 10;
+  top: 12px;
+  left: 12px;
+  width: min(360px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid #ffffff24;
+  border-radius: 14px;
+  background: #0f1b3bea;
+  backdrop-filter: blur(8px);
+}
+
+#panel.hidden { display: none; }
+
+h1 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+label {
+  display: block;
+  margin: 9px 0 5px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+select, button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 8px;
+  color: white;
+  background: #263b63;
+  font-size: 14px;
+}
+
+input[type="range"] { width: 100%; }
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+button { cursor: pointer; }
+
+#status {
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: #bfdbfe;
+}
+
+#togglePanel {
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  right: 12px;
+  width: auto;
+  display: none;
+}
+
+#togglePanel.visible { display: block; }
+#sizeValue { color: #bfdbfe; font-size: 12px; }
+</style>
+</head>
+
+<body>
+
+<model-viewer
+  id="viewer"
+  alt="しばコレの3Dモデル"
+  camera-controls
+  touch-action="none"
+  interaction-prompt="none"
+  shadow-intensity="1"
+  exposure="1.2"
+  environment-image="neutral"
+  loading="eager"
+  reveal="auto"
+  camera-orbit="35deg 70deg 105%">
+</model-viewer>
+
+<div id="panel">
+  <h1>しばコレ 3Dモデルビューア</h1>
+
+  <label for="modelSelect">モデルを選択</label>
+  <select id="modelSelect">
+    <option value="Zousyunkaku.glb">蔵春閣</option>
+    <option value="hellotore_kun.glb">ハロトレくん</option>
+    <option value="shibata_station.glb">新発田駅</option>
+    <option value="shibata_suwa_shrine_gate.glb">諏訪神社の鳥居</option>
+    <option value="shibatacastle.glb">新発田城</option>
+    <option value="hinan.glb">避難誘導サイン</option>
+  </select>
+
+  <label for="sizeSlider">
+    モデルの大きさ：<span id="sizeValue">100%</span>
+  </label>
+  <input id="sizeSlider" type="range"
+         min="0.25" max="3" step="0.05" value="1">
+
+  <div class="buttons">
+    <button id="resetBtn">向きをリセット</button>
+    <button id="rotateBtn">自動回転：OFF</button>
+  </div>
+
+  <div id="status">3Dライブラリを読み込んでいます...</div>
+</div>
+
+<button id="togglePanel" class="visible">設定を閉じる</button>
+
+<script>
+(() => {
+  const viewer = document.getElementById('viewer');
+  const status = document.getElementById('status');
+  const modelSelect = document.getElementById('modelSelect');
+  const sizeSlider = document.getElementById('sizeSlider');
+  const sizeValue = document.getElementById('sizeValue');
+  const panel = document.getElementById('panel');
+  const togglePanel = document.getElementById('togglePanel');
+  const rotateBtn = document.getElementById('rotateBtn');
+
+  let autoRotate = false;
+  let loadVersion = 0;
+
+  function setStatus(message, error = false) {
+    status.textContent = message;
+    status.style.color = error ? '#fca5a5' : '#bfdbfe';
+  }
+
+  function setScale(value) {
+    const n = Number(value);
+    viewer.scale = `${n} ${n} ${n}`;
+    sizeValue.textContent = `${Math.round(n * 100)}%`;
+  }
+
+  function loadModel(url, label) {
+    loadVersion++;
+    setStatus('読み込み中：' + label);
+    viewer.src = url;
+    viewer.alt = label;
+  }
+
+  viewer.addEventListener('load', () => {
+    setStatus('表示成功：' +
+      modelSelect.options[modelSelect.selectedIndex].text);
+    setScale(sizeSlider.value);
+    viewer.updateFraming();
+  });
+
+  viewer.addEventListener('error', () => {
+    setStatus(
+      'モデルを読み込めません。ファイル名・配置・通信状態を確認してください。',
+      true
+    );
+  });
+
+  viewer.addEventListener('progress', event => {
+    if (event.detail.totalProgress < 1) {
+      setStatus('モデルを読み込み中：' +
+        Math.round(event.detail.totalProgress * 100) + '%');
+    }
+  });
+
+  modelSelect.addEventListener('change', () => {
+    setScale(1);
+    loadModel(
+      modelSelect.value,
+      modelSelect.options[modelSelect.selectedIndex].text
+    );
+  });
+
+  sizeSlider.addEventListener('input', () => {
+    setScale(sizeSlider.value);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    viewer.cameraOrbit = '35deg 70deg 105%';
+    viewer.cameraTarget = 'auto auto auto';
+    viewer.updateFraming();
+  });
+
+  rotateBtn.addEventListener('click', () => {
+    autoRotate = !autoRotate;
+
+    if (autoRotate) {
+      viewer.setAttribute('auto-rotate', '');
+    } else {
+      viewer.removeAttribute('auto-rotate');
+    }
+
+    rotateBtn.textContent = '自動回転：' +
+      (autoRotate ? 'ON' : 'OFF');
+  });
+
+  togglePanel.addEventListener('click', () => {
+    const hidden = panel.classList.toggle('hidden');
+    togglePanel.textContent = hidden ? '設定を開く' : '設定を閉じる';
+  });
+
+  let attempts = 0;
+  const waitForLibrary = setInterval(() => {
+    attempts++;
+
+    if (customElements.get('model-viewer')) {
+      clearInterval(waitForLibrary);
+      loadModel(modelSelect.value,
+        modelSelect.options[modelSelect.selectedIndex].text);
+    } else if (attempts >= 100) {
+      clearInterval(waitForLibrary);
+      setStatus(
+        '3Dライブラリを読み込めません。ネット接続を確認してください。',
+        true
+      );
+    }
+  }, 100);
+})();
+</script>
+
+</body>
+</html>
+```<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>しばコレ 3Dモデルビューア</title>
+
+<script type="module"
+src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.4.0/model-viewer.min.js"
+onerror="document.getElementById('status').textContent='3Dライブラリを読み込めません。ネット接続を確認してください。';">
+</script>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+  color: white;
   background: #101521;
 }
 
