@@ -5,218 +5,94 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>しばコレ ARラボ</title>
+
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
 
 <style>
 *{box-sizing:border-box}
-:root{
-  --bg:#07111f;
-  --panel:rgba(9,20,38,.94);
-  --line:#263e5d;
-  --blue:#65b5ff;
-  --text:#edf6ff;
-  --sub:#91a9c6;
-}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:system-ui,"Noto Sans JP",sans-serif;
+  margin:0;background:#07111f;color:#edf6ff;
+  font-family:system-ui,"Noto Sans JP",sans-serif
 }
-#camera{
-  position:fixed;inset:0;width:100%;height:100%;
-  object-fit:cover;z-index:0;background:#101b2a;
-}
-#scene{
-  position:fixed!important;inset:0;
-  width:100%!important;height:100%!important;
-  z-index:1;background:transparent!important;
-}
-a-scene canvas{background:transparent!important}
-
 #top{
   position:fixed;top:0;left:0;right:0;z-index:10;
   padding:calc(12px + env(safe-area-inset-top)) 15px 25px;
   background:linear-gradient(#07111ff0,transparent);
-  pointer-events:none;
+  pointer-events:none
 }
-.brand{display:flex;align-items:center;gap:9px}
-.brand-icon{
-  width:34px;height:34px;border:1px solid #65b5ff88;
-  border-radius:11px;display:grid;place-items:center;
-  color:var(--blue);font-size:19px;
-  background:#102743cc;
-}
-h1{font-size:17px;letter-spacing:.04em;margin:0}
-#top small{display:block;color:var(--sub);font-size:10px;margin-top:3px}
-
-#reticle{
-  position:fixed;z-index:3;left:50%;top:42%;
-  transform:translate(-50%,-50%);
-  color:#ffffff9c;font-size:19px;
-  text-shadow:0 1px 4px #000;pointer-events:none;
-}
-
+h1{font-size:17px;margin:0}
+#top small{color:#91a9c6;font-size:10px}
 #panel{
-  position:fixed;z-index:11;bottom:0;left:0;right:0;
+  position:fixed;bottom:0;left:0;right:0;z-index:11;
   padding:0 12px calc(10px + env(safe-area-inset-bottom));
-  background:linear-gradient(transparent,#050b15aa 14px);
-  transition:transform .25s;
 }
-.panel-inner{
+.inner{
   max-width:560px;margin:auto;
-  background:var(--panel);backdrop-filter:blur(20px);
-  border:1px solid #ffffff20;border-radius:20px;
-  padding:12px;
-  box-shadow:0 -8px 35px #0003;
-  max-height:60vh;overflow:auto;
+  background:rgba(9,20,38,.95);backdrop-filter:blur(20px);
+  border:1px solid #ffffff20;border-radius:20px;padding:13px;
+  max-height:55vh;overflow:auto
 }
-.panel-head{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;margin-bottom:10px;
+button,select,input{font:inherit}
+button{
+  cursor:pointer;border:0;border-radius:10px;padding:11px;
+  background:#65b5ff;color:#061323;font-weight:750
 }
-.panel-title{font-size:13px;font-weight:800}
-.panel-caption{font-size:10px;color:var(--sub);margin-top:3px}
-.status{
-  font-size:10px;color:#9ed8ff;
-  border:1px solid #365777;background:#142940;
-  border-radius:99px;padding:5px 8px;white-space:nowrap;
+.secondary{
+  background:#172b43;color:#edf6ff;
+  border:1px solid #304a67
+}
+select{
+  width:100%;padding:11px;background:#12243b;color:white;
+  border:1px solid #304a67;border-radius:10px
 }
 label{
   display:block;font-size:11px;color:#b5c8df;
-  margin:11px 0 6px;font-weight:700;
+  margin:12px 0 6px;font-weight:700
 }
-select,input,button{font:inherit}
-select{
-  width:100%;padding:10px 11px;
-  background:#12243b;color:var(--text);
-  border:1px solid var(--line);border-radius:10px;
-  font-size:13px;outline:none;
+.buttons{display:flex;gap:8px;margin-top:10px}
+.buttons button{flex:1}
+input[type=range]{width:100%;accent-color:#65b5ff}
+.status{
+  display:inline-block;font-size:11px;padding:5px 9px;
+  border-radius:99px;background:#142940;color:#9ed8ff;
+  margin-bottom:9px
 }
-button{cursor:pointer;border:0}
-.primary{
-  color:#061323;background:var(--blue);
-  font-weight:800;border-radius:10px;padding:10px 12px;
-}
-.secondary{
-  color:var(--text);background:#172b43;
-  border:1px solid #304a67;border-radius:10px;
-  padding:9px 11px;font-size:12px;
-}
-button:active{transform:scale(.98)}
-.file-button{
-  display:block;width:100%;text-align:center;
-  color:#dcecff;background:#12243b;
-  border:1px dashed #486586;border-radius:10px;
-  padding:9px;font-size:12px;
-}
-#file{display:none}
-.adjust{
-  display:grid;grid-template-columns:36px 1fr 36px;
-  align-items:center;gap:8px;
-}
-.step{
-  width:36px;height:36px;border-radius:10px;
-  background:#172d46;border:1px solid #304b69;
-  color:#d8eaff;font-size:18px;
-}
-.value{text-align:center;font-size:12px;font-weight:800;min-width:60px}
-.value small{display:block;color:var(--sub);font-size:9px;font-weight:500}
-input[type=range]{
-  width:100%;display:block;accent-color:var(--blue);
-  margin:0;height:25px;
-}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.controls button{width:100%}
+.value{text-align:center;font-size:12px;font-weight:bold}
 #message{
-  color:var(--sub);font-size:10px;line-height:1.5;
-  margin-top:10px;overflow-wrap:anywhere;min-height:15px;
+  color:#91a9c6;font-size:11px;line-height:1.6;
+  margin-top:10px;overflow-wrap:anywhere
 }
-#collapse{
-  display:block;margin:0 auto 6px;
-  border:1px solid #ffffff24;background:#0b1728eF;
-  color:#dcecff;border-radius:99px;padding:7px 16px;
-  font-size:11px;
+#gps{
+  color:#91a9c6;font-size:10px;line-height:1.6;
+  margin-top:6px;white-space:pre-line
 }
-#panel.collapsed .panel-inner{display:none}
-#panel.collapsed{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
-#panel.collapsed #collapse{margin-bottom:0}
-
+#fold{
+  display:block;margin:0 auto 6px;background:#0b1728;
+  color:white;border:1px solid #ffffff24;border-radius:99px;
+  font-size:11px;padding:7px 15px
+}
+#panel.closed .inner{display:none}
 @media(min-width:750px){
-  #top{right:410px}
   #panel{left:auto;right:18px;bottom:18px;width:370px;padding:0}
-  .panel-inner{max-height:85vh}
-  #collapse{margin-bottom:7px}
+  .inner{max-height:85vh}
 }
 </style>
 </head>
-
 <body>
 
-<video id="camera" autoplay playsinline muted></video>
-
-<a-scene id="scene"
-  embedded
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false"
-  renderer="alpha:true;antialias:true;colorManagement:true"
-  background="color:#000000"
-  loading-screen="enabled:false">
-
-  <a-entity id="rig"
-    camera
-    look-controls="enabled:false"
-    position="0 0 0">
-
-    <a-entity id="anchor" position="0 0 -3">
-
-      <a-entity id="sample" visible="true">
-        <a-box
-          width=".7" height=".7" depth=".7"
-          color="#50a9ff"
-          rotation="0 30 0"
-          animation="property:rotation;to:0 390 0;loop:true;dur:9000;easing:linear">
-        </a-box>
-        <a-text
-          value="AR TEST"
-          align="center"
-          position="0 -.8 0"
-          width="3"
-          color="#ffffff">
-        </a-text>
-      </a-entity>
-
-      <a-entity id="model" visible="false"></a-entity>
-
-    </a-entity>
-  </a-entity>
-</a-scene>
-
 <div id="top">
-  <div class="brand">
-    <div class="brand-icon">⌖</div>
-    <div>
-      <h1>しばコレ ARラボ</h1>
-      <small>SHIBATA · AR MODEL VIEWER</small>
-    </div>
-  </div>
+  <h1>⌖ しばコレ ARラボ</h1>
+  <small>GPS LOCATION AR</small>
 </div>
 
-<div id="reticle">＋</div>
-
 <div id="panel">
-  <button id="collapse">設定を閉じる　⌄</button>
+  <button id="fold">設定を閉じる　⌄</button>
+  <div class="inner">
+    <div id="status" class="status">● GPS未起動</div>
 
-  <div class="panel-inner">
-    <div class="panel-head">
-      <div>
-        <div class="panel-title">MODEL CONTROL</div>
-        <div class="panel-caption">表示モデルと位置を調整</div>
-      </div>
-      <div id="status" class="status">● カメラ未起動</div>
-    </div>
-
-    <button id="start" class="primary" style="width:100%">
-      📷 カメラを起動
-    </button>
+    <button id="start" style="width:100%">📷 カメラ・GPSを起動</button>
 
     <label for="spot">表示モデル</label>
     <select id="spot">
@@ -228,266 +104,268 @@ input[type=range]{
       <option value="shibatacastle.glb">新発田城</option>
     </select>
 
-    <label>自分の3Dモデルを読み込む</label>
-    <label class="file-button" for="file">＋ GLB / GLTF ファイルを選択</label>
-    <input type="file" id="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
-
-    <label>距離</label>
-    <div class="adjust">
-      <button class="step" data-target="distance" data-delta="-0.5">−</button>
-      <div>
-        <input id="distance" type="range" min="1" max="10" value="3" step=".5">
-        <div class="value"><span id="distanceValue">3.0 m</span></div>
-      </div>
-      <button class="step" data-target="distance" data-delta="0.5">＋</button>
-    </div>
+    <label for="file">自分のGLB / GLTFファイル</label>
+    <input type="file" id="file"
+      accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
 
     <label>モデルサイズ</label>
-    <div class="adjust">
-      <button class="step" data-target="size" data-delta="-0.05">−</button>
-      <div>
-        <input id="size" type="range" min=".02" max="1.5" value=".3" step=".01">
-        <div class="value"><span id="sizeValue">0.30 倍</span></div>
-      </div>
-      <button class="step" data-target="size" data-delta="0.05">＋</button>
+    <input id="size" type="range" min=".02" max="1.5"
+      value=".3" step=".01">
+    <div class="value" id="sizeValue">0.30 倍</div>
+
+    <label>自動回転</label>
+    <div class="buttons">
+      <button id="spin" class="secondary">回転 ON</button>
+      <button id="reset" class="secondary">サイズ初期化</button>
     </div>
 
-    <label>高さ</label>
-    <div class="adjust">
-      <button class="step" data-target="height" data-delta="-0.1">−</button>
-      <div>
-        <input id="height" type="range" min="-3" max="3" value="0" step=".1">
-        <div class="value"><span id="heightValue">0.0 m</span></div>
-      </div>
-      <button class="step" data-target="height" data-delta="0.1">＋</button>
+    <div id="message">
+      起動すると現在地を取得し、約10m先に仮のモデル設置地点を作ります。
     </div>
-
-    <div class="controls">
-      <button id="reset" class="secondary">↺ 初期設定</button>
-      <button id="spin" class="secondary">⟳ 回転 ON</button>
-    </div>
-
-    <div id="message">サンプルモデルを表示中です。</div>
+    <div id="gps">現在位置：未取得</div>
   </div>
 </div>
 
+<a-scene
+  id="scene"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false"
+  embedded
+  arjs="sourceType:webcam;videoTexture:true;debugUIEnabled:false"
+  renderer="alpha:true;antialias:true;colorManagement:true"
+  loading-screen="enabled:false">
+
+  <a-camera
+    id="camera"
+    gps-new-camera="gpsMinDistance:1;positionMinAccuracy:100"
+    rotation-reader>
+  </a-camera>
+</a-scene>
+
 <script>
 const $ = id => document.getElementById(id);
-const anchor = $('anchor');
-const model = $('model');
-const sample = $('sample');
+const scene = $('scene');
 
-let fileUrl = null;
-let stream = null;
-let spin = false;
-let activeTarget = sample;
-let currentLoad = 0;
+let selectedFileUrl = null;
+let currentEntity = null;
+let spin = true;
+let gpsReady = false;
+let fixedPoint = null;
+let initialPosition = null;
+let modelGeneration = 0;
 
-function message(text){
-  $('message').textContent = text;
+/* 緯度経度から指定した距離・方角の地点を求める */
+function destination(lat, lon, distance, bearing){
+  const R = 6378137;
+  const br = bearing * Math.PI / 180;
+  const p1 = lat * Math.PI / 180;
+  const l1 = lon * Math.PI / 180;
+  const p2 = Math.asin(
+    Math.sin(p1)*Math.cos(distance/R) +
+    Math.cos(p1)*Math.sin(distance/R)*Math.cos(br)
+  );
+  const l2 = l1 + Math.atan2(
+    Math.sin(br)*Math.sin(distance/R)*Math.cos(p1),
+    Math.cos(distance/R)-Math.sin(p1)*Math.sin(p2)
+  );
+  return {
+    lat:p2*180/Math.PI,
+    lon:l2*180/Math.PI
+  };
 }
 
-/* 位置と大きさ */
-function placement(){
-  const d = Number($('distance').value);
-  const h = Number($('height').value);
-  const s = Number($('size').value);
-
-  anchor.setAttribute('position', `0 ${h} ${-d}`);
-  model.setAttribute('scale', `${s} ${s} ${s}`);
-  sample.setAttribute('scale', `${s} ${s} ${s}`);
-
-  $('distanceValue').textContent = d.toFixed(1) + ' m';
-  $('heightValue').textContent = h.toFixed(1) + ' m';
-  $('sizeValue').textContent = s.toFixed(2) + ' 倍';
-}
-
-['distance','height','size'].forEach(id => {
-  $(id).addEventListener('input', placement);
-});
-
-/* ＋ / − ボタン */
-document.querySelectorAll('.step').forEach(button => {
-  button.addEventListener('click', () => {
-    const input = $(button.dataset.target);
-    const delta = Number(button.dataset.delta);
-    const min = Number(input.min);
-    const max = Number(input.max);
-    const step = Number(input.step);
-
-    let value = Number(input.value) + delta;
-    value = Math.max(min, Math.min(max, value));
-    value = Math.round(value / step) * step;
-
-    input.value = value;
-    placement();
-  });
-});
-
-/* 回転 */
-function updateRotation(){
-  [sample, model].forEach(entity => {
-    entity.removeAttribute('animation__spin');
-  });
-
-  if(spin && activeTarget){
-    activeTarget.setAttribute(
-      'animation__spin',
-      'property:rotation;to:0 360 0;loop:true;dur:10000;easing:linear'
-    );
+/* モデルの生成 */
+function removeCurrent(){
+  modelGeneration++;
+  if(currentEntity){
+    currentEntity.remove();
+    currentEntity = null;
   }
-
-  $('spin').textContent = spin ? '⟳ 回転 OFF' : '⟳ 回転 ON';
 }
 
-/* 表示モデル切り替え */
-function loadModel(src, label){
-  currentLoad++;
-  const thisLoad = currentLoad;
-
-  model.setAttribute('visible', false);
-  sample.setAttribute('visible', false);
-
-  model.removeAttribute('gltf-model');
-  activeTarget = model;
-
-  if(!src){
-    model.setAttribute('visible', false);
-    sample.setAttribute('visible', true);
-    activeTarget = sample;
-    $('file').value = '';
-    updateRotation();
-    message('サンプルモデルを表示中');
+function addModel(src, label){
+  if(!fixedPoint){
+    $('message').textContent='先にカメラ・GPSを起動してください。';
     return;
   }
 
-  updateRotation();
-  message('読み込み中：' + label);
+  const generation = ++modelGeneration;
+  if(currentEntity){
+    currentEntity.remove();
+    currentEntity = null;
+  }
 
-  model.setAttribute('gltf-model', src);
+  const entity = document.createElement('a-entity');
+  currentEntity = entity;
+
+  entity.setAttribute('gps-new-entity-place',{
+    latitude:fixedPoint.lat,
+    longitude:fixedPoint.lon
+  });
+
+  entity.setAttribute('scale',{
+    x:Number($('size').value),
+    y:Number($('size').value),
+    z:Number($('size').value)
+  });
+
+  if(src === 'sample'){
+    const cube = document.createElement('a-box');
+    cube.setAttribute('width','.7');
+    cube.setAttribute('height','.7');
+    cube.setAttribute('depth','.7');
+    cube.setAttribute('color','#50a9ff');
+    cube.setAttribute('material','shader:standard;metalness:.25;roughness:.35');
+    entity.appendChild(cube);
+
+    const text = document.createElement('a-text');
+    text.setAttribute('value','AR TEST');
+    text.setAttribute('align','center');
+    text.setAttribute('position','0 -0.8 0');
+    text.setAttribute('width','3');
+    text.setAttribute('color','#ffffff');
+    entity.appendChild(text);
+
+    scene.appendChild(entity);
+    applySpin();
+    $('message').textContent='サンプルを固定地点に配置しました。';
+    return;
+  }
+
+  entity.setAttribute('gltf-model',src);
+  entity.addEventListener('model-loaded',()=>{
+    if(generation !== modelGeneration)return;
+    applySpin();
+    $('message').textContent='読み込み成功：'+label+' を固定地点に配置しました。';
+  });
+
+  entity.addEventListener('model-error',()=>{
+    if(generation !== modelGeneration)return;
+    $('message').textContent='読み込み失敗：ファイル名と配置場所を確認してください。';
+  });
+
+  scene.appendChild(entity);
+  $('message').textContent='モデル読み込み中：'+label;
 }
 
-/* モデル読み込み完了 */
-model.addEventListener('model-loaded', () => {
-  model.setAttribute('visible', true);
-  sample.setAttribute('visible', false);
-  activeTarget = model;
-  updateRotation();
-  message('読み込み成功：' + $('spot').selectedOptions[0].textContent);
+function selectedModel(){
+  if(selectedFileUrl){
+    addModel(selectedFileUrl,$('file').files[0]?.name || '選択ファイル');
+    return;
+  }
+  const v = $('spot').value;
+  addModel(v === 'sample' ? 'sample' : './'+encodeURIComponent(v),v);
+}
+
+function applySpin(){
+  if(!currentEntity)return;
+  currentEntity.removeAttribute('animation__spin');
+  if(spin){
+    currentEntity.setAttribute('animation__spin',
+      'property:rotation;to:0 360 0;loop:true;dur:12000;easing:linear');
+  }
+}
+
+/* サイズ変更 */
+$('size').addEventListener('input',()=>{
+  const s = Number($('size').value);
+  $('sizeValue').textContent=s.toFixed(2)+' 倍';
+  if(currentEntity){
+    currentEntity.setAttribute('scale',{x:s,y:s,z:s});
+  }
 });
 
-/* モデル読み込み失敗 */
-model.addEventListener('model-error', () => {
-  model.setAttribute('visible', false);
-  sample.setAttribute('visible', true);
-  activeTarget = sample;
-  updateRotation();
-  message('読み込み失敗。ファイル名と配置場所を確認してください。サンプルを表示します。');
-});
-
-/* セレクトボックス */
-$('spot').addEventListener('change', () => {
-  if(fileUrl){
-    URL.revokeObjectURL(fileUrl);
-    fileUrl = null;
+/* モデル選択 */
+$('spot').addEventListener('change',()=>{
+  if(selectedFileUrl){
+    URL.revokeObjectURL(selectedFileUrl);
+    selectedFileUrl=null;
   }
-
-  $('file').value = '';
-
-  const value = $('spot').value;
-
-  if(value === 'sample'){
-    loadModel(null, 'サンプル');
-  }else{
-    loadModel('./' + encodeURIComponent(value), value);
-  }
+  $('file').value='';
+  if(gpsReady)selectedModel();
 });
 
 /* ファイル選択 */
-$('file').addEventListener('change', event => {
-  const file = event.target.files[0];
-  if(!file) return;
-
-  if(fileUrl){
-    URL.revokeObjectURL(fileUrl);
-  }
-
-  fileUrl = URL.createObjectURL(file);
-  loadModel(fileUrl, file.name);
+$('file').addEventListener('change',e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  if(selectedFileUrl)URL.revokeObjectURL(selectedFileUrl);
+  selectedFileUrl=URL.createObjectURL(file);
+  if(gpsReady)selectedModel();
 });
 
-/* カメラ起動 */
-$('start').addEventListener('click', async () => {
+/* 回転切り替え */
+$('spin').addEventListener('click',()=>{
+  spin=!spin;
+  $('spin').textContent=spin?'回転 ON':'回転 OFF';
+  applySpin();
+});
+
+/* サイズ初期化 */
+$('reset').addEventListener('click',()=>{
+  $('size').value=.3;
+  $('sizeValue').textContent='0.30 倍';
+  if(currentEntity)currentEntity.setAttribute('scale',{x:.3,y:.3,z:.3});
+});
+
+/* パネル開閉 */
+$('fold').addEventListener('click',()=>{
+  const closed=$('panel').classList.toggle('closed');
+  $('fold').textContent=closed?'設定を開く　⌃':'設定を閉じる　⌄';
+});
+
+/* GPS開始 */
+$('start').addEventListener('click',async()=>{
   try{
-    if(!navigator.mediaDevices?.getUserMedia){
-      throw new Error('HTTPSで開いてください');
-    }
+    if(!navigator.geolocation)throw new Error('このブラウザはGPSに対応していません');
 
-    if(stream){
-      stream.getTracks().forEach(track => track.stop());
-    }
+    $('message').textContent='カメラとGPSを起動しています。許可を求められたら許可してください。';
 
-    stream = await navigator.mediaDevices.getUserMedia({
+    // iOS Safariなどではユーザー操作内でカメラ権限を要求
+    const cameraPermission = await navigator.mediaDevices.getUserMedia({
       video:{facingMode:{ideal:'environment'}},
       audio:false
     });
 
-    $('camera').srcObject = stream;
-    await $('camera').play();
+    // AR.js側のカメラも利用するため、権限取得後にトラックを止める
+    cameraPermission.getTracks().forEach(t=>t.stop());
 
-    $('status').textContent = '● カメラ起動中';
-    $('status').style.background = '#194b42';
-    $('status').style.color = '#b5ffe6';
+    navigator.geolocation.watchPosition(pos=>{
+      const c=pos.coords;
+      $('gps').textContent=
+        '現在位置：'+c.latitude.toFixed(6)+', '+c.longitude.toFixed(6)+
+        '\nGPS精度：約'+c.accuracy.toFixed(1)+' m';
 
-    message('カメラ起動完了。モデルを選んでください。');
-  }catch(error){
-    message('カメラを起動できません：' + error.message + '。HTTPSと権限を確認してください。');
+      $('status').textContent='● GPS取得中';
+      $('status').style.background='#194b42';
+      $('status').style.color='#b5ffe6';
+
+      if(!initialPosition){
+        initialPosition={lat:c.latitude,lon:c.longitude};
+        // 初回取得時点で約10m先に固定地点を作成。
+        // 方角は北方向。必要なら実際の施設座標に置き換える。
+        fixedPoint=destination(c.latitude,c.longitude,10,0);
+        gpsReady=true;
+        selectedModel();
+      }
+    },err=>{
+      $('message').textContent='GPS取得エラー：'+err.message+
+        '。HTTPS・位置情報権限・屋外のGPS状態を確認してください。';
+    },{
+      enableHighAccuracy:true,
+      maximumAge:0,
+      timeout:20000
+    });
+  }catch(err){
+    $('message').textContent='起動エラー：'+err.message+
+      '。HTTPSとカメラ権限を確認してください。';
   }
 });
 
-/* パネル折りたたみ */
-$('collapse').addEventListener('click', () => {
-  const collapsed = $('panel').classList.toggle('collapsed');
-  $('collapse').textContent = collapsed ? '設定を開く　⌃' : '設定を閉じる　⌄';
-});
-
-/* 初期設定に戻す */
-$('reset').addEventListener('click', () => {
-  $('distance').value = 3;
-  $('size').value = .3;
-  $('height').value = 0;
-  placement();
-});
-
-/* 回転 ON / OFF */
-$('spin').addEventListener('click', () => {
-  spin = !spin;
-  updateRotation();
-});
-
-/* 背景透過 */
-$('scene').addEventListener('loaded', () => {
-  const scene = $('scene');
-  scene.renderer.setClearColor(0x000000, 0);
-  scene.renderer.setClearAlpha(0);
-  scene.object3D.background = null;
-});
-
-/* 起動時の初期表示 */
-placement();
-loadModel(null, 'サンプル');
-
-/* 終了処理 */
-window.addEventListener('pagehide', () => {
-  if(stream){
-    stream.getTracks().forEach(track => track.stop());
-  }
-  if(fileUrl){
-    URL.revokeObjectURL(fileUrl);
-  }
+window.addEventListener('pagehide',()=>{
+  if(selectedFileUrl)URL.revokeObjectURL(selectedFileUrl);
 });
 </script>
-
 </body>
 </html>
 ```
