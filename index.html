@@ -3,367 +3,178 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>しばコレ ARラボ</title>
+<title>しばコレ ARラボ - 表示テスト</title>
 
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
 
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;background:#07111f;color:#edf6ff;
-  font-family:system-ui,"Noto Sans JP",sans-serif
+* {
+  box-sizing: border-box;
 }
-#top{
-  position:fixed;top:0;left:0;right:0;z-index:10;
-  padding:calc(12px + env(safe-area-inset-top)) 15px 25px;
-  background:linear-gradient(#07111ff0,transparent);
-  pointer-events:none
+
+body {
+  margin: 0;
+  background: #07111f;
+  color: #edf6ff;
+  font-family: system-ui, "Noto Sans JP", sans-serif;
 }
-h1{font-size:17px;margin:0}
-#top small{color:#91a9c6;font-size:10px}
-#panel{
-  position:fixed;bottom:0;left:0;right:0;z-index:11;
-  padding:0 12px calc(10px + env(safe-area-inset-bottom));
+
+#top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: calc(12px + env(safe-area-inset-top)) 15px 20px;
+  background: linear-gradient(#07111ff0, transparent);
+  pointer-events: none;
 }
-.inner{
-  max-width:560px;margin:auto;
-  background:rgba(9,20,38,.95);backdrop-filter:blur(20px);
-  border:1px solid #ffffff20;border-radius:20px;padding:13px;
-  max-height:55vh;overflow:auto
+
+h1 {
+  font-size: 17px;
+  margin: 0;
 }
-button,select,input{font:inherit}
-button{
-  cursor:pointer;border:0;border-radius:10px;padding:11px;
-  background:#65b5ff;color:#061323;font-weight:750
+
+#info {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 10;
+  padding: 14px;
+  border: 1px solid #ffffff30;
+  border-radius: 14px;
+  background: rgba(9, 20, 38, .92);
+  font-size: 13px;
+  line-height: 1.7;
 }
-.secondary{
-  background:#172b43;color:#edf6ff;
-  border:1px solid #304a67
+
+#status {
+  color: #9ed8ff;
+  font-weight: bold;
 }
-select{
-  width:100%;padding:11px;background:#12243b;color:white;
-  border:1px solid #304a67;border-radius:10px
-}
-label{
-  display:block;font-size:11px;color:#b5c8df;
-  margin:12px 0 6px;font-weight:700
-}
-.buttons{display:flex;gap:8px;margin-top:10px}
-.buttons button{flex:1}
-input[type=range]{width:100%;accent-color:#65b5ff}
-.status{
-  display:inline-block;font-size:11px;padding:5px 9px;
-  border-radius:99px;background:#142940;color:#9ed8ff;
-  margin-bottom:9px
-}
-.value{text-align:center;font-size:12px;font-weight:bold}
-#message{
-  color:#91a9c6;font-size:11px;line-height:1.6;
-  margin-top:10px;overflow-wrap:anywhere
-}
-#gps{
-  color:#91a9c6;font-size:10px;line-height:1.6;
-  margin-top:6px;white-space:pre-line
-}
-#fold{
-  display:block;margin:0 auto 6px;background:#0b1728;
-  color:white;border:1px solid #ffffff24;border-radius:99px;
-  font-size:11px;padding:7px 15px
-}
-#panel.closed .inner{display:none}
-@media(min-width:750px){
-  #panel{left:auto;right:18px;bottom:18px;width:370px;padding:0}
-  .inner{max-height:85vh}
+
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #65b5ff;
+  color: #061323;
+  font: inherit;
+  font-weight: bold;
 }
 </style>
 </head>
+
 <body>
 
 <div id="top">
   <h1>⌖ しばコレ ARラボ</h1>
-  <small>GPS LOCATION AR</small>
 </div>
 
-<div id="panel">
-  <button id="fold">設定を閉じる　⌄</button>
-  <div class="inner">
-    <div id="status" class="status">● GPS未起動</div>
-
-    <button id="start" style="width:100%">📷 カメラ・GPSを起動</button>
-
-    <label for="spot">表示モデル</label>
-    <select id="spot">
-      <option value="sample">サンプル（青い立方体）</option>
-      <option value="Zousyunkaku.glb">蔵春閣</option>
-      <option value="hellotore_kun.glb">ハロトレくん</option>
-      <option value="shibata_station.glb">新発田駅</option>
-      <option value="shibata_suwa_shrine_gate.glb">諏訪神社の鳥居</option>
-      <option value="shibatacastle.glb">新発田城</option>
-    </select>
-
-    <label for="file">自分のGLB / GLTFファイル</label>
-    <input type="file" id="file"
-      accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
-
-    <label>モデルサイズ</label>
-    <input id="size" type="range" min=".02" max="1.5"
-      value=".3" step=".01">
-    <div class="value" id="sizeValue">0.30 倍</div>
-
-    <label>自動回転</label>
-    <div class="buttons">
-      <button id="spin" class="secondary">回転 ON</button>
-      <button id="reset" class="secondary">サイズ初期化</button>
-    </div>
-
-    <div id="message">
-      起動すると現在地を取得し、約10m先に仮のモデル設置地点を作ります。
-    </div>
-    <div id="gps">現在位置：未取得</div>
+<div id="info">
+  <div id="status">カメラ起動前</div>
+  <div id="detail">
+    ボタンを押してカメラを起動してください。
   </div>
+  <button id="start">カメラを起動</button>
 </div>
 
 <a-scene
-  id="scene"
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:false"
   embedded
-  arjs="sourceType:webcam;videoTexture:true;debugUIEnabled:false"
-  renderer="alpha:true;antialias:true;colorManagement:true"
-  loading-screen="enabled:false">
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
+  renderer="alpha: true; antialias: true; colorManagement: true"
+  loading-screen="enabled: false"
+  background="color: #000000">
 
-  <a-camera
-    id="camera"
-    gps-new-camera="gpsMinDistance:1;positionMinAccuracy:100"
-    rotation-reader>
-  </a-camera>
+  <a-entity id="cameraRig">
+    <a-camera
+      id="camera"
+      position="0 0 0"
+      look-controls="enabled: true"
+      wasd-controls="enabled: false">
+    </a-camera>
+
+    <a-box
+      id="testBox"
+      position="0 0 -3"
+      width="0.5"
+      height="0.5"
+      depth="0.5"
+      material="shader: flat; color: #00ff00; side: double"
+      visible="true">
+    </a-box>
+  </a-entity>
+
 </a-scene>
 
 <script>
-const $ = id => document.getElementById(id);
-const scene = $('scene');
+const statusText = document.getElementById('status');
+const detail = document.getElementById('detail');
+const startButton = document.getElementById('start');
 
-let selectedFileUrl = null;
-let currentEntity = null;
-let spin = true;
-let gpsReady = false;
-let fixedPoint = null;
-let initialPosition = null;
-let modelGeneration = 0;
+let cameraStream = null;
 
-/* 緯度経度から指定した距離・方角の地点を求める */
-function destination(lat, lon, distance, bearing){
-  const R = 6378137;
-  const br = bearing * Math.PI / 180;
-  const p1 = lat * Math.PI / 180;
-  const l1 = lon * Math.PI / 180;
-  const p2 = Math.asin(
-    Math.sin(p1)*Math.cos(distance/R) +
-    Math.cos(p1)*Math.sin(distance/R)*Math.cos(br)
-  );
-  const l2 = l1 + Math.atan2(
-    Math.sin(br)*Math.sin(distance/R)*Math.cos(p1),
-    Math.cos(distance/R)-Math.sin(p1)*Math.sin(p2)
-  );
-  return {
-    lat:p2*180/Math.PI,
-    lon:l2*180/Math.PI
-  };
-}
+startButton.addEventListener('click', async () => {
+  try {
+    statusText.textContent = 'カメラ起動中...';
+    detail.textContent = 'カメラの使用を許可してください。';
 
-/* モデルの生成 */
-function removeCurrent(){
-  modelGeneration++;
-  if(currentEntity){
-    currentEntity.remove();
-    currentEntity = null;
-  }
-}
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+      throw new Error(
+        'カメラを利用できません。HTTPSでアクセスしてください。'
+      );
+    }
 
-function addModel(src, label){
-  if(!fixedPoint){
-    $('message').textContent='先にカメラ・GPSを起動してください。';
-    return;
-  }
-
-  const generation = ++modelGeneration;
-  if(currentEntity){
-    currentEntity.remove();
-    currentEntity = null;
-  }
-
-  const entity = document.createElement('a-entity');
-  currentEntity = entity;
-
-  entity.setAttribute('gps-new-entity-place',{
-    latitude:fixedPoint.lat,
-    longitude:fixedPoint.lon
-  });
-
-  entity.setAttribute('scale',{
-    x:Number($('size').value),
-    y:Number($('size').value),
-    z:Number($('size').value)
-  });
-
-  if(src === 'sample'){
-    const cube = document.createElement('a-box');
-    cube.setAttribute('width','.7');
-    cube.setAttribute('height','.7');
-    cube.setAttribute('depth','.7');
-    cube.setAttribute('color','#50a9ff');
-    cube.setAttribute('material','shader:standard;metalness:.25;roughness:.35');
-    entity.appendChild(cube);
-
-    const text = document.createElement('a-text');
-    text.setAttribute('value','AR TEST');
-    text.setAttribute('align','center');
-    text.setAttribute('position','0 -0.8 0');
-    text.setAttribute('width','3');
-    text.setAttribute('color','#ffffff');
-    entity.appendChild(text);
-
-    scene.appendChild(entity);
-    applySpin();
-    $('message').textContent='サンプルを固定地点に配置しました。';
-    return;
-  }
-
-  entity.setAttribute('gltf-model',src);
-  entity.addEventListener('model-loaded',()=>{
-    if(generation !== modelGeneration)return;
-    applySpin();
-    $('message').textContent='読み込み成功：'+label+' を固定地点に配置しました。';
-  });
-
-  entity.addEventListener('model-error',()=>{
-    if(generation !== modelGeneration)return;
-    $('message').textContent='読み込み失敗：ファイル名と配置場所を確認してください。';
-  });
-
-  scene.appendChild(entity);
-  $('message').textContent='モデル読み込み中：'+label;
-}
-
-function selectedModel(){
-  if(selectedFileUrl){
-    addModel(selectedFileUrl,$('file').files[0]?.name || '選択ファイル');
-    return;
-  }
-  const v = $('spot').value;
-  addModel(v === 'sample' ? 'sample' : './'+encodeURIComponent(v),v);
-}
-
-function applySpin(){
-  if(!currentEntity)return;
-  currentEntity.removeAttribute('animation__spin');
-  if(spin){
-    currentEntity.setAttribute('animation__spin',
-      'property:rotation;to:0 360 0;loop:true;dur:12000;easing:linear');
-  }
-}
-
-/* サイズ変更 */
-$('size').addEventListener('input',()=>{
-  const s = Number($('size').value);
-  $('sizeValue').textContent=s.toFixed(2)+' 倍';
-  if(currentEntity){
-    currentEntity.setAttribute('scale',{x:s,y:s,z:s});
-  }
-});
-
-/* モデル選択 */
-$('spot').addEventListener('change',()=>{
-  if(selectedFileUrl){
-    URL.revokeObjectURL(selectedFileUrl);
-    selectedFileUrl=null;
-  }
-  $('file').value='';
-  if(gpsReady)selectedModel();
-});
-
-/* ファイル選択 */
-$('file').addEventListener('change',e=>{
-  const file=e.target.files[0];
-  if(!file)return;
-  if(selectedFileUrl)URL.revokeObjectURL(selectedFileUrl);
-  selectedFileUrl=URL.createObjectURL(file);
-  if(gpsReady)selectedModel();
-});
-
-/* 回転切り替え */
-$('spin').addEventListener('click',()=>{
-  spin=!spin;
-  $('spin').textContent=spin?'回転 ON':'回転 OFF';
-  applySpin();
-});
-
-/* サイズ初期化 */
-$('reset').addEventListener('click',()=>{
-  $('size').value=.3;
-  $('sizeValue').textContent='0.30 倍';
-  if(currentEntity)currentEntity.setAttribute('scale',{x:.3,y:.3,z:.3});
-});
-
-/* パネル開閉 */
-$('fold').addEventListener('click',()=>{
-  const closed=$('panel').classList.toggle('closed');
-  $('fold').textContent=closed?'設定を開く　⌃':'設定を閉じる　⌄';
-});
-
-/* GPS開始 */
-$('start').addEventListener('click',async()=>{
-  try{
-    if(!navigator.geolocation)throw new Error('このブラウザはGPSに対応していません');
-
-    $('message').textContent='カメラとGPSを起動しています。許可を求められたら許可してください。';
-
-    // iOS Safariなどではユーザー操作内でカメラ権限を要求
-    const cameraPermission = await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:'environment'}},
-      audio:false
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' }
+      },
+      audio: false
     });
 
-    // AR.js側のカメラも利用するため、権限取得後にトラックを止める
-    cameraPermission.getTracks().forEach(t=>t.stop());
+    const scene = document.querySelector('a-scene');
 
-    navigator.geolocation.watchPosition(pos=>{
-      const c=pos.coords;
-      $('gps').textContent=
-        '現在位置：'+c.latitude.toFixed(6)+', '+c.longitude.toFixed(6)+
-        '\nGPS精度：約'+c.accuracy.toFixed(1)+' m';
+    statusText.textContent = 'カメラ許可成功';
+    detail.textContent =
+      '緑色の立方体が見えるか確認してください。';
 
-      $('status').textContent='● GPS取得中';
-      $('status').style.background='#194b42';
-      $('status').style.color='#b5ffe6';
+    /*
+      この版は描画確認専用です。
+      GPS配置や実世界の座標固定は行いません。
+    */
 
-      if(!initialPosition){
-        initialPosition={lat:c.latitude,lon:c.longitude};
-        // 初回取得時点で約10m先に固定地点を作成。
-        // 方角は北方向。必要なら実際の施設座標に置き換える。
-        fixedPoint=destination(c.latitude,c.longitude,10,0);
-        gpsReady=true;
-        selectedModel();
-      }
-    },err=>{
-      $('message').textContent='GPS取得エラー：'+err.message+
-        '。HTTPS・位置情報権限・屋外のGPS状態を確認してください。';
-    },{
-      enableHighAccuracy:true,
-      maximumAge:0,
-      timeout:20000
-    });
-  }catch(err){
-    $('message').textContent='起動エラー：'+err.message+
-      '。HTTPSとカメラ権限を確認してください。';
+    if (!scene.hasLoaded) {
+      await new Promise(resolve => {
+        scene.addEventListener('loaded', resolve, { once: true });
+      });
+    }
+
+    document.getElementById('testBox').setAttribute(
+      'visible',
+      'true'
+    );
+
+    startButton.textContent = 'カメラ起動済み';
+
+  } catch (error) {
+    statusText.textContent = '起動エラー';
+    detail.textContent = error.message;
   }
 });
 
-window.addEventListener('pagehide',()=>{
-  if(selectedFileUrl)URL.revokeObjectURL(selectedFileUrl);
+window.addEventListener('pagehide', () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+  }
 });
 </script>
+
 </body>
 </html>
