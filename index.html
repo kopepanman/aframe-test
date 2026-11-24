@@ -134,8 +134,7 @@ const debug = document.getElementById("debug");
 
 const ACTIVE_RADIUS = 300;
 
-// モデルの最大寸法（m）
-const TARGET_MODEL_SIZE = 45.0;
+// モデルごとの目標高さ（m）は spots の targetHeight で指定
 
 const states = new Map();
 
@@ -163,47 +162,47 @@ window.addEventListener("unhandledrejection", function(e) {
 
 const spots = [
 
-{id:"castle",name:"新発田城",lat:37.954824724542696,lng:139.326001834219947,model:"shibata_jyo.glb"},
+{id:"castle",name:"新発田城",lat:37.954824724542696,lng:139.326001834219947,model:"shibata_jyo.glb",targetHeight:60},
 
-{id:"zousyunkaku",name:"蔵春閣",lat:37.94389807273562,lng:139.3317142467578,model:"Zousyunkaku.glb"},
+{id:"zousyunkaku",name:"蔵春閣",lat:37.94389807273562,lng:139.3317142467578,model:"Zousyunkaku.glb",targetHeight:60},
 
-{id:"sl",name:"東公園のSL",lat:37.94367248807764,lng:139.3323475293261,model:"SL.glb"},
+{id:"sl",name:"東公園のSL",lat:37.94367248807764,lng:139.3323475293261,model:"SL.glb",targetHeight:45},
 
-{id:"oumon",name:"王紋酒造",lat:37.94436989072327,lng:139.33066511399528,model:"Oumon.glb"},
+{id:"oumon",name:"王紋酒造",lat:37.94436989072327,lng:139.33066511399528,model:"Oumon.glb",targetHeight:60},
 
-{id:"station",name:"新発田駅",lat:37.94413,lng:139.33510,model:"shibata_station.glb"},
+{id:"station",name:"新発田駅",lat:37.94413,lng:139.33510,model:"shibata_station.glb",targetHeight:70},
 
-{id:"menchi",name:"五十公野メンチカツや",lat:37.93682,lng:139.34488,model:"Menchikatsu.glb"},
+{id:"menchi",name:"五十公野メンチカツや",lat:37.93682,lng:139.34488,model:"Menchikatsu.glb",targetHeight:45},
 
-{id:"hellotore",name:"新潟職業能力開発短期大学校",lat:37.955482,lng:139.338409,model:"shibata_station.glb"},
+{id:"hellotore",name:"新潟職業能力開発短期大学校",lat:37.955482,lng:139.338409,model:"hellotore_kun.glb",targetHeight:60},
 
-{id:"ayamenoyu",name:"あやめの湯",lat:37.953545,lng:139.354947,model:"ayamenoyu.glb"},
+{id:"ayamenoyu",name:"あやめの湯",lat:37.953545,lng:139.354947,model:"ayamenoyu.glb",targetHeight:60},
 
-{id:"ikunesu",name:"イクネスしばた",lat:37.944357,lng:139.333388,model:"ikunesu_shibata_building.glb"},
+{id:"ikunesu",name:"イクネスしばた",lat:37.944357,lng:139.333388,model:"ikunesu_shibata_building.glb",targetHeight:60},
 
-{id:"culture-center",name:"カルチャーセンター",lat:37.950246,lng:139.338618,model:"culture_center.glb"},
+{id:"culture-center",name:"カルチャーセンター",lat:37.950246,lng:139.338618,model:"culture_center.glb",targetHeight:60},
 
-{id:"parlor-yaoya",name:"パーラーやお家",lat:37.958090796262155,lng:139.34239931165678,model:"parlor_yaoya.glb"},
+{id:"parlor-yaoya",name:"パーラーやお家",lat:37.958090796262155,lng:139.34239931165678,model:"parlor_yaoya.glb",targetHeight:60},
 
-{id:"bontakeda",name:"ボン・タケダ",lat:37.94039,lng:139.33600,model:"bontakeda_shibata.glb"},
+{id:"bontakeda",name:"ボン・タケダ",lat:37.94039,lng:139.33600,model:"bontakeda_shibata.glb",targetHeight:60},
 
-{id:"ino",name:"文化洋食ino",lat:37.96236411397717,lng:139.33428189358867,model:"ino.glb"},
+{id:"ino",name:"文化洋食ino",lat:37.96236411397717,lng:139.33428189358867,model:"ino.glb",targetHeight:60},
 
-{id:"yasuke",name:"やすけカレー",lat:37.93774827263629,lng:139.33615892651278,model:"yasuke.glb"},
+{id:"yasuke",name:"やすけカレー",lat:37.93774827263629,lng:139.33615892651278,model:"yasuke.glb",targetHeight:60},
 
-{id:"kamajo",name:"レストラン蒲城",lat:37.9504968436357,lng:139.339474708348,model:"restaurant_kamajo.glb"},
+{id:"kamajo",name:"レストラン蒲城",lat:37.9504968436357,lng:139.339474708348,model:"restaurant_kamajo.glb",targetHeight:60},
 
-{id:"kikusui",name:"菊水",lat:37.960376479226,lng:139.35429135822383,model:"kikusui_funaguchi_final.glb"},
+{id:"kikusui",name:"菊水",lat:37.960376479226,lng:139.35429135822383,model:"kikusui_funaguchi_final.glb",targetHeight:60},
 
-{id:"ijimino",name:"五十公野公園",lat:37.939869,lng:139.356680,model:"ijimino_park.glb"},
+{id:"ijimino",name:"五十公野公園",lat:37.939869,lng:139.356680,model:"ijimino_park.glb",targetHeight:45},
 
-{id:"fukiyakoji",name:"蕗谷虹児記念館",lat:37.951780,lng:139.327276,model:"fukiyakoji.glb"},
+{id:"fukiyakoji",name:"蕗谷虹児記念館",lat:37.951780,lng:139.327276,model:"fukiyakoji.glb",targetHeight:60},
 
-{id:"suwa",name:"諏訪神社",lat:37.944214,lng:139.332004,model:"shibata_suwa_shrine_gate.glb"},
+{id:"suwa",name:"諏訪神社",lat:37.944214,lng:139.332004,model:"shibata_suwa_shrine_gate.glb",targetHeight:45},
 
-{id:"rengaya",name:"コーヒーマリーナ煉瓦屋",lat:37.9490054,lng:139.3244045,model:"rengaya.glb"},
+{id:"rengaya",name:"コーヒーマリーナ煉瓦屋",lat:37.9490054,lng:139.3244045,model:"rengaya.glb",targetHeight:60},
 
-{id:"history-library",name:"新発田歴史図書館",lat:37.951279909157336,lng:139.32774756292181,model:"history_library.glb"}
+{id:"history-library",name:"新発田歴史図書館",lat:37.951279909157336,lng:139.32774756292181,model:"history_library.glb",targetHeight:60}
 
 ];
 
@@ -218,50 +217,31 @@ function autoScaleModel(entity, modelObject, spot) {
         return;
     }
 
-    // ワールド座標を更新
+    // モデルの寸法を取得
     entity.object3D.updateMatrixWorld(true);
     modelObject.updateMatrixWorld(true);
 
-    // モデルの大きさを取得
     const box = new THREE.Box3().setFromObject(modelObject);
-
     const size = new THREE.Vector3();
-
     box.getSize(size);
 
-    const maxSize = Math.max(
-        size.x,
-        size.y,
-        size.z
-    );
+    // 高さ（Y方向）を基準に指定サイズへ調整
+    const originalHeight = size.y;
+    const targetHeight = spot.targetHeight || 45;
 
-    if (!Number.isFinite(maxSize) || maxSize < 0.0001) {
-
+    if (!Number.isFinite(originalHeight) || originalHeight < 0.0001) {
         states.set(spot.id, "サイズ取得失敗");
-
-        console.warn(
-            spot.name + ": サイズを取得できません"
-        );
-
+        console.warn(spot.name + ": 高さを取得できません");
         return;
     }
 
-    // 最大寸法を90mにする
-    const scale = TARGET_MODEL_SIZE / maxSize;
+    const scale = targetHeight / originalHeight;
 
-    // モデル全体を拡大・縮小
-    entity.object3D.scale.set(
-        scale,
-        scale,
-        scale
-    );
-
+    // 縦横比を維持したままモデル全体を拡大・縮小
+    entity.object3D.scale.set(scale, scale, scale);
     entity.object3D.updateMatrixWorld(true);
 
-    states.set(
-        spot.id,
-        "読込成功（自動サイズ調整済み）"
-    );
+    states.set(spot.id, `読込成功（高さ${targetHeight}m）`);
 
     console.log(
         spot.name,
@@ -269,6 +249,8 @@ function autoScaleModel(entity, modelObject, spot) {
         size.x.toFixed(2),
         size.y.toFixed(2),
         size.z.toFixed(2),
+        "目標高さ:",
+        targetHeight + "m",
         "調整倍率:",
         scale.toFixed(4)
     );
@@ -470,7 +452,8 @@ GPS精度:${accuracy.toFixed(1)} m
 ${active}
 
 自動サイズ調整
-最大寸法:${TARGET_MODEL_SIZE}m`;
+基準:モデルごとの高さ
+目標高さ:${nearest ? nearest.targetHeight + "m" : "-"}`;
 
         },
 
