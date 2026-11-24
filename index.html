@@ -1,154 +1,329 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
 <title>観光AR | しばコレ</title>
+
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-#debug{position:fixed;top:10px;left:10px;right:10px;z-index:9999;padding:10px;border-radius:8px;background:rgba(0,0,0,.72);color:#0f0;font-size:13px;line-height:1.45;white-space:pre-line;pointer-events:none}
-#back{position:fixed;right:10px;bottom:12px;z-index:9999}
-#back button{border:none;border-radius:10px;padding:11px 15px;background:#1976d2;color:#fff;font-size:14px;font-weight:bold}
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+#debug{
+    position:fixed;
+    top:10px;
+    left:10px;
+    right:10px;
+    z-index:9999;
+    padding:10px;
+    border-radius:8px;
+    background:rgba(0,0,0,.72);
+    color:#0f0;
+    font-size:13px;
+    line-height:1.45;
+    white-space:pre-line;
+    pointer-events:none;
+}
+
+#back{
+    position:fixed;
+    right:10px;
+    bottom:12px;
+    z-index:9999;
+}
+
+#back button{
+    border:none;
+    border-radius:10px;
+    padding:11px 15px;
+    background:#1976d2;
+    color:#fff;
+    font-size:14px;
+    font-weight:bold;
+}
 </style>
+
 <link rel="stylesheet" href="ar-ui.css">
 </head>
-<body>
-<div id="debug">GPS取得待機中...</div>
-<div id="back"><button onclick="location.href='index.html'">← ホーム</button></div>
 
-<a-scene id="scene" vr-mode-ui="enabled:false" embedded renderer="antialias:true;colorManagement:true;logarithmicDepthBuffer:true" arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:false;">
-<a-camera gps-camera rotation-reader camera="far:500;near:0.5"></a-camera>
+<body>
+
+<div id="debug">GPS監視を準備中...</div>
+
+<div id="back">
+    <button onclick="location.href='index.html'">← ホーム</button>
+</div>
+
+<a-scene
+    id="scene"
+    vr-mode-ui="enabled:false"
+    embedded
+    renderer="antialias:true;colorManagement:true;logarithmicDepthBuffer:true"
+    arjs="sourceType:webcam;gpsMinDistance:5;gpsTimeInterval:1000;debugUIEnabled:false;"
+>
+
+<a-camera
+    gps-camera
+    rotation-reader
+    camera="far:500;near:0.5">
+</a-camera>
 
 <a-entity id="model-castle" gps-entity-place="latitude:37.954824724542696;longitude:139.326001834219947;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-zousyunkaku" gps-entity-place="latitude:37.94389807273562;longitude:139.3317142467578;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-sl" gps-entity-place="latitude:37.94367248807764;longitude:139.3323475293261;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-oumon" gps-entity-place="latitude:37.94436989072327;longitude:139.33066511399528;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-station" gps-entity-place="latitude:37.94413;longitude:139.33510;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-menchi" gps-entity-place="latitude:37.93682;longitude:139.34488;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-hellotore" gps-entity-place="latitude:37.955482;longitude:139.338409;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-ayamenoyu" gps-entity-place="latitude:37.953545;longitude:139.354947;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-ikunesu" gps-entity-place="latitude:37.944357;longitude:139.333388;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-culture-center" gps-entity-place="latitude:37.950246;longitude:139.338618;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-parlor-yaoya" gps-entity-place="latitude:37.958090796262155;longitude:139.34239931165678;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-bontakeda" gps-entity-place="latitude:37.94039;longitude:139.33600;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-ino" gps-entity-place="latitude:37.96236411397717;longitude:139.33428189358867;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-yasuke" gps-entity-place="latitude:37.93774827263629;longitude:139.33615892651278;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-kamajo" gps-entity-place="latitude:37.9504968436357;longitude:139.339474708348;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-kikusui" gps-entity-place="latitude:37.960376479226;longitude:139.35429135822383;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-ijimino" gps-entity-place="latitude:37.939869;longitude:139.356680;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-fukiyakoji" gps-entity-place="latitude:37.951780;longitude:139.327276;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-suwa" gps-entity-place="latitude:37.944214;longitude:139.332004;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-rengaya" gps-entity-place="latitude:37.9490054;longitude:139.3244045;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 <a-entity id="model-history-library" gps-entity-place="latitude:37.951279909157336;longitude:139.32774756292181;" scale="1 1 1" position="0 2 0" rotation="0 180 0" visible="false"></a-entity>
+
 </a-scene>
 
 <script src="collection-data.js"></script>
 <script src="collection-tracker.js"></script>
 
 <script>
+
 const debug = document.getElementById("debug");
 
-// 全モデルの最大寸法を統一（メートル）
-const TARGET_MODEL_SIZE = 2.0;
-
-const spots = [
-{id:"castle",name:"新発田城",lat:37.954824724542696,lng:139.326001834219947,model:"shibata_jyo.glb",scale:"1 1 1"},
-{id:"zousyunkaku",name:"蔵春閣",lat:37.94389807273562,lng:139.3317142467578,model:"Zousyunkaku.glb",scale:"1 1 1"},
-{id:"sl",name:"東公園のSL",lat:37.94367248807764,lng:139.3323475293261,model:"SL.glb",scale:"1 1 1"},
-{id:"oumon",name:"王紋酒造",lat:37.94436989072327,lng:139.33066511399528,model:"Oumon.glb",scale:"1 1 1"},
-{id:"station",name:"新発田駅",lat:37.94413,lng:139.33510,model:"shibata_station.glb",scale:"1 1 1"},
-{id:"menchi",name:"五十公野メンチカツや",lat:37.93682,lng:139.34488,model:"Menchikatsu.glb",scale:"1 1 1"},
-{id:"hellotore",name:"新潟職業能力開発短期大学校",lat:37.955482,lng:139.338409,model:"hellotore_kun.glb",scale:"1 1 1"},
-{id:"ayamenoyu",name:"あやめの湯",lat:37.953545,lng:139.354947,model:"ayamenoyu.glb",scale:"1 1 1"},
-{id:"ikunesu",name:"イクネスしばた",lat:37.944357,lng:139.333388,model:"ikunesu_shibata_building.glb",scale:"1 1 1"},
-{id:"culture-center",name:"カルチャーセンター",lat:37.950246,lng:139.338618,model:"culture_center.glb",scale:"1 1 1"},
-{id:"parlor-yaoya",name:"パーラーやお家",lat:37.958090796262155,lng:139.34239931165678,model:"parlor_yaoya.glb",scale:"1 1 1"},
-{id:"bontakeda",name:"ボン・タケダ",lat:37.94039,lng:139.33600,model:"bontakeda_shibata.glb",scale:"1 1 1"},
-{id:"ino",name:"文化洋食ino",lat:37.96236411397717,lng:139.33428189358867,model:"ino.glb",scale:"1 1 1"},
-{id:"yasuke",name:"やすけカレー",lat:37.93774827263629,lng:139.33615892651278,model:"yasuke.glb",scale:"1 1 1"},
-{id:"kamajo",name:"レストラン蒲城",lat:37.9504968436357,lng:139.339474708348,lng:139.339474708348,model:"restaurant_kamajo.glb",scale:"1 1 1"},
-{id:"kikusui",name:"菊水",lat:37.960376479226,lng:139.35429135822383,model:"kikusui_funaguchi_final.glb",scale:"1 1 1"},
-{id:"ijimino",name:"五十公野公園",lat:37.939869,lng:139.356680,model:"ijimino_park.glb",scale:"1 1 1"},
-{id:"fukiyakoji",name:"蕗谷虹児記念館",lat:37.951780,lng:139.327276,model:"fukiyakoji.glb",scale:"1 1 1"},
-{id:"suwa",name:"諏訪神社",lat:37.944214,lng:139.332004,model:"shibata_suwa_shrine_gate.glb",scale:"1 1 1"},
-{id:"rengaya",name:"コーヒーマリーナ煉瓦屋",lat:37.9490054,lng:139.3244045,model:"rengaya.glb",scale:"1 1 1"},
-{id:"history-library",name:"新発田歴史図書館",lat:37.951279909157336,lng:139.32774756292181,model:"history_library.glb",scale:"1 1 1"}
-];
+// =====================================
+// 基本設定
+// =====================================
 
 const ACTIVE_RADIUS = 300;
+
+// モデルの最大寸法（m）
+const TARGET_MODEL_SIZE = 2.0;
+
 const states = new Map();
 
-// モデルの自動サイズ調整
+let currentActiveId = null;
+
+// =====================================
+// エラー表示
+// =====================================
+
+window.addEventListener("error", function(e) {
+    debug.textContent =
+        "JavaScriptエラー\n" +
+        e.message +
+        "\n行番号:" + e.lineno;
+});
+
+window.addEventListener("unhandledrejection", function(e) {
+    debug.textContent =
+        "処理エラー\n" + e.reason;
+});
+
+// =====================================
+// モデル一覧
+// =====================================
+
+const spots = [
+
+{id:"castle",name:"新発田城",lat:37.954824724542696,lng:139.326001834219947,model:"shibata_jyo.glb"},
+
+{id:"zousyunkaku",name:"蔵春閣",lat:37.94389807273562,lng:139.3317142467578,model:"Zousyunkaku.glb"},
+
+{id:"sl",name:"東公園のSL",lat:37.94367248807764,lng:139.3323475293261,model:"SL.glb"},
+
+{id:"oumon",name:"王紋酒造",lat:37.94436989072327,lng:139.33066511399528,model:"Oumon.glb"},
+
+{id:"station",name:"新発田駅",lat:37.94413,lng:139.33510,model:"shibata_station.glb"},
+
+{id:"menchi",name:"五十公野メンチカツや",lat:37.93682,lng:139.34488,model:"Menchikatsu.glb"},
+
+{id:"hellotore",name:"新潟職業能力開発短期大学校",lat:37.955482,lng:139.338409,model:"hellotore_kun.glb"},
+
+{id:"ayamenoyu",name:"あやめの湯",lat:37.953545,lng:139.354947,model:"ayamenoyu.glb"},
+
+{id:"ikunesu",name:"イクネスしばた",lat:37.944357,lng:139.333388,model:"ikunesu_shibata_building.glb"},
+
+{id:"culture-center",name:"カルチャーセンター",lat:37.950246,lng:139.338618,model:"culture_center.glb"},
+
+{id:"parlor-yaoya",name:"パーラーやお家",lat:37.958090796262155,lng:139.34239931165678,model:"parlor_yaoya.glb"},
+
+{id:"bontakeda",name:"ボン・タケダ",lat:37.94039,lng:139.33600,model:"bontakeda_shibata.glb"},
+
+{id:"ino",name:"文化洋食ino",lat:37.96236411397717,lng:139.33428189358867,model:"ino.glb"},
+
+{id:"yasuke",name:"やすけカレー",lat:37.93774827263629,lng:139.33615892651278,model:"yasuke.glb"},
+
+{id:"kamajo",name:"レストラン蒲城",lat:37.9504968436357,lng:139.339474708348,model:"restaurant_kamajo.glb"},
+
+{id:"kikusui",name:"菊水",lat:37.960376479226,lng:139.35429135822383,model:"kikusui_funaguchi_final.glb"},
+
+{id:"ijimino",name:"五十公野公園",lat:37.939869,lng:139.356680,model:"ijimino_park.glb"},
+
+{id:"fukiyakoji",name:"蕗谷虹児記念館",lat:37.951780,lng:139.327276,model:"fukiyakoji.glb"},
+
+{id:"suwa",name:"諏訪神社",lat:37.944214,lng:139.332004,model:"shibata_suwa_shrine_gate.glb"},
+
+{id:"rengaya",name:"コーヒーマリーナ煉瓦屋",lat:37.9490054,lng:139.3244045,model:"rengaya.glb"},
+
+{id:"history-library",name:"新発田歴史図書館",lat:37.951279909157336,lng:139.32774756292181,model:"history_library.glb"}
+
+];
+
+// =====================================
+// 自動サイズ調整
+// =====================================
+
 function autoScaleModel(entity, modelObject, spot) {
+
     if (!modelObject) {
         states.set(spot.id, "サイズ取得失敗");
         return;
     }
 
+    // ワールド座標を更新
     entity.object3D.updateMatrixWorld(true);
     modelObject.updateMatrixWorld(true);
 
+    // モデルの大きさを取得
     const box = new THREE.Box3().setFromObject(modelObject);
+
     const size = new THREE.Vector3();
 
     box.getSize(size);
 
-    const maxSize = Math.max(size.x, size.y, size.z);
+    const maxSize = Math.max(
+        size.x,
+        size.y,
+        size.z
+    );
 
     if (!Number.isFinite(maxSize) || maxSize < 0.0001) {
+
         states.set(spot.id, "サイズ取得失敗");
-        console.warn(spot.name + ": サイズを取得できません");
+
+        console.warn(
+            spot.name + ": サイズを取得できません"
+        );
+
         return;
     }
 
-    // 最大寸法が2mになるように計算
+    // 最大寸法を2mにする
     const scale = TARGET_MODEL_SIZE / maxSize;
 
-    entity.object3D.scale.set(scale, scale, scale);
+    // モデル全体を拡大・縮小
+    entity.object3D.scale.set(
+        scale,
+        scale,
+        scale
+    );
+
     entity.object3D.updateMatrixWorld(true);
 
     states.set(
         spot.id,
-        "読込成功（自動調整済み）"
+        "読込成功（自動サイズ調整済み）"
     );
 
     console.log(
         spot.name,
-        "元サイズ:",
-        size,
+        "元のサイズ:",
+        size.x.toFixed(2),
+        size.y.toFixed(2),
+        size.z.toFixed(2),
         "調整倍率:",
-        scale
+        scale.toFixed(4)
     );
 }
 
-// 各モデルの読み込みイベント
+// =====================================
+// モデル読み込みイベント
+// =====================================
+
 spots.forEach(spot => {
-    const entity = document.getElementById(`model-${spot.id}`);
+
+    const entity =
+        document.getElementById(`model-${spot.id}`);
 
     states.set(spot.id, "待機中");
 
     entity.addEventListener("model-loaded", event => {
+
         const modelObject =
             event.detail.model ||
             entity.getObject3D("mesh");
 
-        autoScaleModel(entity, modelObject, spot);
+        autoScaleModel(
+            entity,
+            modelObject,
+            spot
+        );
+
     });
 
     entity.addEventListener("model-error", event => {
+
         states.set(spot.id, "読込失敗");
-        console.error(spot.name, event.detail);
+
+        console.error(
+            spot.name,
+            event.detail
+        );
+
     });
+
 });
+
+// =====================================
+// GPS距離計算
+// =====================================
 
 function rad(v) {
     return v * Math.PI / 180;
 }
 
 function distanceMeters(lat1, lng1, lat2, lng2) {
+
     const R = 6371000;
+
     const dLat = rad(lat2 - lat1);
     const dLng = rad(lng2 - lng1);
 
@@ -159,10 +334,16 @@ function distanceMeters(lat1, lng1, lat2, lng2) {
         Math.sin(dLng / 2) ** 2;
 
     return R * 2 *
-        Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+        );
 }
 
+// =====================================
 // 最寄りモデルだけ表示
+// =====================================
+
 function showOnlyNearestModel(nearest, nearestDistance) {
 
     const activeId =
@@ -175,76 +356,114 @@ function showOnlyNearestModel(nearest, nearestDistance) {
         const entity =
             document.getElementById(`model-${spot.id}`);
 
-        const isActive = spot.id === activeId;
+        const isActive =
+            spot.id === activeId;
 
         entity.setAttribute("visible", isActive);
 
         if (isActive && !entity.hasAttribute("gltf-model")) {
 
-            // 再読み込み時に前回の倍率をリセット
+            // 読み込み前に倍率を初期化
             entity.object3D.scale.set(1, 1, 1);
 
             states.set(spot.id, "読み込み中");
 
-            entity.setAttribute("gltf-model", spot.model);
+            entity.setAttribute(
+                "gltf-model",
+                spot.model
+            );
 
-        } else if (!isActive && entity.hasAttribute("gltf-model")) {
+        } else if (
+            !isActive &&
+            entity.hasAttribute("gltf-model")
+        ) {
 
+            // モデルを削除
             entity.removeAttribute("gltf-model");
+
             entity.removeObject3D("mesh");
 
-            // 次回読み込みに備えて初期化
             entity.object3D.scale.set(1, 1, 1);
 
             states.set(spot.id, "待機中");
         }
+
     });
+
+    currentActiveId = activeId;
 
     return activeId;
 }
 
+// =====================================
 // GPS取得
-navigator.geolocation.watchPosition(
+// =====================================
 
-    p => {
+if (!navigator.geolocation) {
 
-        const lat = p.coords.latitude;
-        const lng = p.coords.longitude;
-        const accuracy = p.coords.accuracy;
+    debug.textContent =
+        "このブラウザはGPSに対応していません";
 
-        let nearest = null;
-        let nearestDistance = Infinity;
+} else if (!window.isSecureContext) {
 
-        spots.forEach(spot => {
+    debug.textContent =
+        "HTTPSでアクセスしてください";
 
-            const d = distanceMeters(
-                lat,
-                lng,
-                spot.lat,
-                spot.lng
-            );
+} else {
 
-            if (d < nearestDistance) {
-                nearestDistance = d;
-                nearest = spot;
-            }
-        });
+    debug.textContent =
+        "GPS監視を開始しました。\n位置情報を取得中...";
 
-        const activeId =
-            showOnlyNearestModel(nearest, nearestDistance);
+    navigator.geolocation.watchPosition(
 
-        const active = activeId
-            ? `${nearest.name}:${states.get(activeId) || "準備中"}`
-            : "なし";
+        p => {
 
-        debug.textContent =
+            const lat = p.coords.latitude;
+            const lng = p.coords.longitude;
+            const accuracy = p.coords.accuracy;
+
+            let nearest = null;
+            let nearestDistance = Infinity;
+
+            // 最寄り地点を検索
+            spots.forEach(spot => {
+
+                const d = distanceMeters(
+                    lat,
+                    lng,
+                    spot.lat,
+                    spot.lng
+                );
+
+                if (d < nearestDistance) {
+
+                    nearestDistance = d;
+                    nearest = spot;
+
+                }
+
+            });
+
+            // 最寄りモデルだけ表示
+            const activeId =
+                showOnlyNearestModel(
+                    nearest,
+                    nearestDistance
+                );
+
+            const active =
+                activeId
+                ? `${nearest.name} : ${states.get(activeId) || "準備中"}`
+                : "300m圏外";
+
+            debug.textContent =
 `現在位置
 緯度:${lat.toFixed(8)}
 経度:${lng.toFixed(8)}
 GPS精度:${accuracy.toFixed(1)} m
 
 最寄り:${nearest ? nearest.name : "-"}
-距離:${nearestDistance < Infinity ? nearestDistance.toFixed(1) : "-"} m
+距離:${nearestDistance.toFixed(1)} m
 設置座標:${nearest ? `${nearest.lat}, ${nearest.lng}` : "-"}
 
 300m以内のモデル
@@ -252,16 +471,41 @@ ${active}
 
 自動サイズ調整
 最大寸法:${TARGET_MODEL_SIZE}m`;
-    },
 
-    e => {
-        debug.textContent =
-            `位置情報エラー\n${e.message}`;
-    },
+        },
 
-    {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 15000
-    }
-);
+        e => {
+
+            const errors = {
+
+                1: "位置情報の使用が拒否されています",
+
+                2: "現在位置を取得できません",
+
+                3: "GPS取得がタイムアウトしました"
+
+            };
+
+            debug.textContent =
+                "GPS取得エラー\n" +
+                (errors[e.code] || e.message) +
+                "\nエラーコード:" + e.code;
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 30000
+        }
+
+    );
+
+}
+
+</script>
+
+<script src="ar-ui.js"></script>
+
+</body>
+</html>
